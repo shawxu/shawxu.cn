@@ -1,0 +1,20 @@
+<script language="jscript" runat="server">
+
+function Application_OnStart() {
+
+}
+
+function Session_OnStart() {
+  Session.Contents("uname") = "Xx";
+}
+
+function Session_OnEnd() {
+  Session.Contents.Remove("uname");
+}
+
+
+function Application_OnEnd() {
+
+}
+
+</script>

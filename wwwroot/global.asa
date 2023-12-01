@@ -1,0 +1,22 @@
+<script language="jscript" runat="server">
+
+function Application_OnStart() {
+
+}
+
+function Session_OnStart() {
+  Session.Contents("appg") = "Xx你好";
+}
+
+function Session_OnEnd() {
+  Session.Contents.remove("appg");
+}
+
+
+function Application_OnEnd() {
+
+}
+
+</script>
+<!--<object runat="server" scope="application" id="wshObj" progid="WScript.Shell">
+</object>-->
