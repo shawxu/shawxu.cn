@@ -19,7 +19,7 @@ function escString(str) {
   var RP_MAP = {
     "\\": "\\\\",
     "\n": "\\n",
-    "\r": "",
+    "\r": "\\r",
     "\t": "\\t",
     "\/": "\\\/",
     "\'": "\\'",
@@ -38,7 +38,7 @@ function getBoundaryStr(srcStr) {
     srcStr = objContentType + "";
   }
   if(srcStr.length > 0) {
-    var m = srcStr.match(/boundary\=[-]*(\w+)/i);
+    var m = srcStr.match(/boundary\=\-*(\w+)/i);
     if(m && m[1]) {
       return m[1];
     }
@@ -49,10 +49,38 @@ function getBoundaryStr(srcStr) {
 
 //解析multipart form data本体，到map结构
 function parseMultipartData(srcData, strBdr){
-  if("string" != typeof srcData || "string" != typeof strBdr){
-    return {};
+  var resMap = {};
+  if("string" != typeof srcData || "string" != typeof strBdr || srcData.length < 1 || strBdr.length < 1){
+    return resMap;
   }
 
+  var re = new RegExp("\\-+" + strBdr + "\\-*");
+  var rslt = srcData.split(re);
+  if(rslt && rslt.length > 0) {
+    for(var i = 0, l = rslt.length; i < l; ++i) { //Content-Disposition: form-data; name="log"
+      var tmp = rslt[i];
+      var subRe = /form\-data\;\ name\=\"(.+)\"(?:\r\n)+((?:.|\r\n)+)$/;
+      var m = tmp.match(subRe);
+      if(m && m[1] && m[2]) {
+        resMap[m[1]] = m[2];
+      } else {
+        continue;
+      }
+    }
+  }
+  return resMap;
+}
+
+
+function dataMapStringify(dataMap) {
+  dataMap = "object" == typeof dataMap ? dataMap : {};
+  var rest = [], t;
+  for(var k in dataMap) {
+    if("string" == typeof k && "string" == typeof (t = dataMap[k])) {
+      rest.push(Server.URLEncode(k) + "=" + Server.URLEncode(t));
+    }
+  }
+  return rest.join("&");
 }
 
 //使用ADO stream工具对象读取multipart form data的流，转换为标准字符串
@@ -69,14 +97,12 @@ objAdoStream = null; //释放对象引用，待回收
 //获取multipart form data的分隔符特征串
 strBoundary = getBoundaryStr();
 
-Response.appendToLog("###" + totalByteLength + "###"); //working
-
 %>
 {
   "code" : 0,
-  "msg" : "OK",
+  "msg" : "ok",
   "bodyLength" : "<%= totalByteLength%>",
   "contentLengthHeader" : "<%= contentLengthHeader%>",
   "boundary" : "<%= escString(strBoundary) %>",
-  "reqBodyDecoded" : "<%= escString(formPostData) %>"
+  "reqBodyDecoded" : "<%= escString(dataMapStringify(parseMultipartData(formPostData, strBoundary))) %>"
 }
