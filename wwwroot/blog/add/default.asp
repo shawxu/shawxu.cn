@@ -6,10 +6,7 @@ Response.charSet = "utf-8";
 var objContentType = Request.serverVariables("CONTENT_TYPE");
 var totalByteLength = Request.totalBytes;
 var contentLengthHeader = Request.serverVariables("CONTENT_LENGTH");
-var formPostData;
-var objAdoStream = Server.createObject("ADODB.Stream");
-var adTypeBinary = 1,
-    adTypeText = 2;
+var formPostData = "";
 var strBoundary = "";
 
 
@@ -83,26 +80,40 @@ function dataMapStringify(dataMap) {
   return rest.join("&");
 }
 
-//使用ADO stream工具对象读取multipart form data的流，转换为标准字符串
-objAdoStream.type = adTypeBinary; //字节流模式
-objAdoStream.open(); //打开流
-objAdoStream.write(Request.binaryRead(totalByteLength)); //用request body的流式读取后写入
-objAdoStream.position = 0; //流指针归位初始点
-objAdoStream.type = adTypeText; //转换为文本模式
-objAdoStream.charset = "utf-8"; //设定文本模式以utf-8来认知
-formPostData = objAdoStream.readText(); //读取文本到字符串变量
-objAdoStream.close(); //关闭流工具
-objAdoStream = null; //释放对象引用，待回收
+function readPostStream(objRequest) {
+  var objAdoStream = Server.createObject("ADODB.Stream");
+  var adTypeBinary = 1,
+    adTypeText = 2;
+  var res = "", t;
+
+  if (!objRequest || !(t = objRequest.totalBytes)) {
+    return res;
+  }
+
+  //使用ADO stream工具对象读取multipart form data的流，转换为标准字符串
+  objAdoStream.type = adTypeBinary; //字节流模式
+  objAdoStream.open(); //打开流
+  objAdoStream.write(objRequest.binaryRead(t)); //用request body的流式读取后写入
+  objAdoStream.position = 0; //流指针归位初始点
+  objAdoStream.type = adTypeText; //转换为文本模式
+  objAdoStream.charset = "utf-8"; //设定文本模式以utf-8来认知
+  res = objAdoStream.readText(); //读取文本到字符串变量
+  objAdoStream.close(); //关闭流工具
+  objAdoStream = null; //释放对象引用，待回收
+  return res;
+}
 
 //获取multipart form data的分隔符特征串
 strBoundary = getBoundaryStr();
 
+//流式读取出post data
+formPostData = readPostStream(Request);
+
 %>
 {
   "code" : 0,
-  "msg" : "ok",
+  "msg" : "<%= contentLengthHeader%>, ok",
   "bodyLength" : "<%= totalByteLength%>",
-  "contentLengthHeader" : "<%= contentLengthHeader%>",
   "boundary" : "<%= escString(strBoundary) %>",
   "reqBodyDecoded" : "<%= escString(dataMapStringify(parseMultipartData(formPostData, strBoundary))) %>"
 }
