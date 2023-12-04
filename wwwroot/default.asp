@@ -18,7 +18,7 @@
 	<main id="container">
 		<article><h6>
 			<% Response.write(
-        (new Date()).toGMTString() + "<br>" +
+        (new Date()).toUTCString() + "<br>" +
         Session.LCID + "<br>" +
         Session.codePage + "<br>" +
         Session.sessionID + "<br>"
