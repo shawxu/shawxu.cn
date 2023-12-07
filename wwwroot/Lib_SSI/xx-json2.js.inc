@@ -5,16 +5,17 @@
 
   //插入JSON的字符串字面量时需要做必要的转义
   JSON.escString = function(str) {
-    var RE = /[\\\n\r\t\/\'\"]/g;
+    var RE = /[\\\n\r\t\"]/g;
     var RP_MAP = {
       "\\": "\\\\",
       "\n": "\\n",
       "\r": "\\r",
       "\t": "\\t",
-      "\/": "\\\/",
-      "\'": "\\'",
       "\"": "\\\""
     };
+    if(!str) {
+      return "";
+    }
     return str.replace(RE, function(a) {
       return RP_MAP[a];
     });

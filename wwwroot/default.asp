@@ -1,49 +1,52 @@
 <%@ language="jscript" %>
 <% 
-  Response.buffer = false;
   var _t0 = new Date();
   Response.charset = "utf-8";
-  //Response.addHeader("Cache-control", "max-age=15");
-  //Response.addHeader("Last-modified", _t0.toGMTString().replace("UTC", "GMT"));
- %>
+%>
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
   <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href="https://s3.shawxu.net/images/favicons/xx-v1/favicon.ico">
+  <link rel="stylesheet" href="https://s3.shawxu.net/css/bootstrap.min.css">
 	<title>shawxu.cn /.</title>
 </head>
 <body>
 	<main id="container">
-		<article><h6>
-			<% Response.write(
-        (new Date()).toUTCString() + "<br>" +
-        Session.LCID + "<br>" +
-        Session.codePage + "<br>" +
-        Session.sessionID + "<br>"
-      );
-
-      for(var itr = new Enumerator(Session.contents), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
-        tmp.push(itm, " : ", Session.contents(itm), "<br>");
-      }
-      Response.write(tmp.join("") + "<br>");
-      //Response.flush();
-
-      Response.write(Response.cookies.count + "<br>");
-
-      for(var itr = new Enumerator(Request.serverVariables), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
-        if(itm == "ALL_HTTP" || itm == "ALL_RAW"){
-          tmp.push("# ", itm, " : <br><pre>", Request.serverVariables(itm), "</pre>");
-        }else{
-          tmp.push("# ", itm, " : ", Request.serverVariables(itm), "<br>");
+		<article>
+      <h6>
+        <%
+          var dateValueAppStart = Number(Application.Contents("XXASP_APP_START"));
+          var dateAppStart = new Date(dateValueAppStart);
+        %>
+        Application started at: <%= dateValueAppStart%> => <%= dateAppStart.toString()%><br>
+        Now: <%= (new Date()).valueOf()%><br>
+        Session.LCID: <%= Session.LCID%><br>
+        Session.codePage: <%= Session.codePage%><br>
+        Session.sessionID: <%= Session.sessionID%><br>
+      </h6>
+			<%
+        for(var itr = new Enumerator(Session.contents), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
+          tmp.push(itm + " : " + Session.contents(itm));
         }
-      }
-      Response.write(tmp.join("") + "Hello world!<br>" + (new Date() - _t0));
-      //Response.flush();
+        Response.write(tmp.join("<br>") + "<br>");
+        Response.write(Request.cookies.count + "<br>");
+
+        Response.flush();
+
+        for(var itr = new Enumerator(Request.serverVariables), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
+          if(itm == "ALL_HTTP" || itm == "ALL_RAW"){
+            tmp.push(itm + " : <pre>" + Request.serverVariables(itm) + "</pre>");
+          }else{
+            tmp.push(itm + " : <i style=\"font-weight:300\">" + Request.serverVariables(itm) + "</i>");
+          }
+        }
+        Response.write(tmp.join("<br>"));
       %>
       <br>
-		</h6></article>
+      Page running time take: <%= (new Date() - _t0)%> ms
+		</article>
 	</main>
 </body>
 </html>
