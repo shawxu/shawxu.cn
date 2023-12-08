@@ -3,6 +3,7 @@
   var _t0 = new Date();
   Response.charset = "utf-8";
 %>
+<!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -32,8 +33,9 @@
         }
         Response.write(tmp.join("<br>") + "<br>");
         Response.write(Request.cookies.count + "<br>");
-
         Response.flush();
+
+        //XXASP.sleep(2);
 
         for(var itr = new Enumerator(Request.serverVariables), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
           if(itm == "ALL_HTTP" || itm == "ALL_RAW"){

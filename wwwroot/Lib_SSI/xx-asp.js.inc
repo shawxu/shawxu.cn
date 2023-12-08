@@ -1,6 +1,11 @@
 <%
   if (typeof XXASP != "object") {
-    XXASP = {};
+    XXASP = {
+      RETURN_CODE: {
+        OK: 0,
+        NO_SYS_OBJ: 400
+      }
+    };
   }
 
   //获取multipart form data分割特征串的工具方法
@@ -84,6 +89,20 @@
       }
     }
     return rest.join("&");
+  };
+
+  XXASP.sleep = function (sec) {
+    var ows = Application.staticObjects("objWshShell");
+    if("object" == typeof ows) {
+      sec = ("number" != typeof sec) ? 1 : (sec < 1 ? 1 : (sec > 60 ? 60 : Math.round(sec)));
+      ows.run("timeout /T " + sec + " /NOBREAK", 0, true);
+      return XXASP.RETURN_CODE.OK; //return code
+    } else {
+      if("undefined" != typeof Response) {
+        Response.appendToLog("No WScript.Shell object!");
+      }
+      return XXASP.RETURN_CODE.NO_SYS_OBJ; //error return code
+    }
   };
 
 %>
