@@ -31,8 +31,8 @@
         for(var itr = new Enumerator(Session.contents), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
           tmp.push(itm + " : " + Session.contents(itm));
         }
+        tmp.push(Request.cookies.count);
         Response.write(tmp.join("<br>") + "<br>");
-        Response.write(Request.cookies.count + "<br>");
         Response.flush();
 
         //XXASP.sleep(2);

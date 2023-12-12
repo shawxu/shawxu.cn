@@ -1,4 +1,4 @@
-<%@ language="jscript"%>
+<%@ language="jscript" codepage="65001"%>
 <%
   Response.contentType = "application/json";
   Response.charSet = "utf-8";
@@ -20,10 +20,6 @@
   formPostData = XXASP.readPostStream(Request);
 
   objFormData = XXASP.parseMultipartData(formPostData, strBoundary);
-
-  if ("object" == typeof objFormData && "string" == typeof objFormData.timing) {
-    objFormData.timing = DC_JSON.parse(objFormData.timing);
-  }
 %>
 {
   "code" : 0,

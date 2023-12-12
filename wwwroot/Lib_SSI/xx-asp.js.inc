@@ -38,12 +38,12 @@
       return resMap;
     }
 
-    var re = new RegExp("\\-+" + strBdr + "\\-*");
+    var re = new RegExp("(?:\\r\\n)?\\-+" + strBdr + "\\-*");
     var rslt = srcData.split(re);
     if(rslt && rslt.length > 0) {
       for(var i = 0, l = rslt.length; i < l; ++i) { //Content-Disposition: form-data; name="log"
         var tmp = rslt[i];
-        var subRe = /form\-data\;\ name\=\"(.+)\"(?:\r\n)+((?:.|\r\n)+)$/;
+        var subRe = /form\-data\;\ name\=\"(.+)\"(?:\r\n){0,2}((?:.|\r\n)+)$/;
         var m = tmp.match(subRe);
         if(m && m[1] && m[2]) {
           resMap[m[1]] = m[2];
