@@ -1,4 +1,6 @@
 logs/
-wwwroot/App_Data
+
 .vs
 
+*.laccdb
+*.ldb
