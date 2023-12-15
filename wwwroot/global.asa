@@ -20,5 +20,3 @@ function Application_OnEnd() {
 }
 
 </script>
-<object runat="server" scope="application" id="objWshShell" progid="WScript.Shell">
-</object>

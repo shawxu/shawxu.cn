@@ -2,6 +2,7 @@
 <%
   Response.contentType = "application/json";
   Response.charSet = "utf-8";
+  var _t0 = new Date();
 %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/json2.js.inc" -->
@@ -35,12 +36,17 @@
   //connAccessDb.open("DSN=xxBlog"); //GOOD!! 64 bit dsn
   //connAccessDb.open("DSN=xxBlog32"); //GOOD!! 32 bit dsn
 
+  connAccessDb.close();
+
+  delete connAccessDb;
+
 %>
 {
   "code" : 0,
   "msg" : "<%= contentLengthHeader %>, ok",
   "bodyLength" : "<%= totalByteLength %>",
-  "dbPath" : "<%= JSON.escString(Server.mapPath("/") + "\\App_Data\\xxblog.accdb") %>",
+  "duration" : "<%= (new Date() - _t0) %>",
+  "dbPath" : "<%= JSON.escString(dbFilePath) %>",
   "boundary" : "<%= JSON.escString(strBoundary) %>",
   "reqBodyDecoded" : "<%= JSON.escString(XXASP.dataMapQueryStringify(objFormData)) %>",
   "reqBodyJSON" : 
