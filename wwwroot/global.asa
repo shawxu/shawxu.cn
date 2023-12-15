@@ -1,22 +1,22 @@
 <script language="jscript" runat="server">
 
 function Application_OnStart() {
-
+  var t0 = new Date();
+  Application.Contents("XXASP_APP_START") = t0.getTime();
 }
 
 function Session_OnStart() {
-  Session.Contents("appg") = "Xx你好";
+  var t0 = new Date();
+  Session.Contents("XXASP_SN_START") = t0.getTime();
 }
 
 function Session_OnEnd() {
-  Session.Contents.remove("appg");
+  Session.Contents.remove("XXASP_SN_START");
 }
 
 
 function Application_OnEnd() {
-
+  Application.Contents.remove("XXASP_APP_START");
 }
 
 </script>
-<!--<object runat="server" scope="application" id="wshObj" progid="WScript.Shell">
-</object>-->

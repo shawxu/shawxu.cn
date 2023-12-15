@@ -1,6 +1,11 @@
 <%
   if (typeof XXASP != "object") {
-    XXASP = {};
+    XXASP = {
+      RETURN_CODE: {
+        OK: 0,
+        NO_SYS_OBJ: 400
+      }
+    };
   }
 
   //获取multipart form data分割特征串的工具方法
@@ -33,12 +38,12 @@
       return resMap;
     }
 
-    var re = new RegExp("\\-+" + strBdr + "\\-*");
+    var re = new RegExp("(?:\\r\\n)?\\-+" + strBdr + "\\-*");
     var rslt = srcData.split(re);
     if(rslt && rslt.length > 0) {
       for(var i = 0, l = rslt.length; i < l; ++i) { //Content-Disposition: form-data; name="log"
         var tmp = rslt[i];
-        var subRe = /form\-data\;\ name\=\"(.+)\"(?:\r\n)+((?:.|\r\n)+)$/;
+        var subRe = /form\-data\;\ name\=\"(.+)\"(?:\r\n){0,2}((?:.|\r\n)+)$/;
         var m = tmp.match(subRe);
         if(m && m[1] && m[2]) {
           resMap[m[1]] = m[2];
@@ -53,8 +58,9 @@
 
   XXASP.readPostStream = function(objRequest) {
     var objAdoStream = Server.createObject("ADODB.Stream");
-    var adTypeBinary = 1,
-      adTypeText = 2;
+    //依赖ado基础库
+    //var adTypeBinary = 1,
+    //  adTypeText = 2;
     var res = "", t;
 
     if (!objRequest || !(t = objRequest.totalBytes)) {
@@ -85,5 +91,6 @@
     }
     return rest.join("&");
   };
+
 
 %>
