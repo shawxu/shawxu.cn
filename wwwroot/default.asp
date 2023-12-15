@@ -21,11 +21,12 @@
           var dateValueAppStart = Number(Application.Contents("XXASP_APP_START"));
           var dateAppStart = new Date(dateValueAppStart);
         %>
-        Application started at: <%= dateValueAppStart%> => <%= dateAppStart.toString()%><br>
-        Now: <%= (new Date()).valueOf()%><br>
-        Session.LCID: <%= Session.LCID%><br>
-        Session.codePage: <%= Session.codePage%><br>
-        Session.sessionID: <%= Session.sessionID%><br>
+        Application started at: <%= dateValueAppStart %> => <%= dateAppStart.toString() %><br>
+        Now: <%= (new Date()).valueOf() %><br>
+        Session.LCID: <%= Session.LCID %><br>
+        Session.codePage: <%= Session.codePage %><br>
+        Session.sessionID: <%= Session.sessionID %><br>
+        Path: <%= Server.mapPath("/") + "\\App_Data\\xxblog.accdb;" %>
       </h6>
 			<%
         for(var itr = new Enumerator(Session.contents), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
@@ -47,7 +48,7 @@
         Response.write(tmp.join("<br>"));
       %>
       <br>
-      Page running time take: <%= (new Date() - _t0)%> ms
+      Page running time take: <%= (new Date() - _t0) %> ms
 		</article>
 	</main>
 </body>

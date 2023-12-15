@@ -1,5 +1,8 @@
 logs/
-wwwroot/App_Data
+
 .vs
 ._.DS_Store
 .DS_Store
+
+*.laccdb
+*.ldb
