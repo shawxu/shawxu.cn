@@ -58,8 +58,9 @@
 
   XXASP.readPostStream = function(objRequest) {
     var objAdoStream = Server.createObject("ADODB.Stream");
-    var adTypeBinary = 1,
-      adTypeText = 2;
+    //依赖ado基础库
+    //var adTypeBinary = 1,
+    //  adTypeText = 2;
     var res = "", t;
 
     if (!objRequest || !(t = objRequest.totalBytes)) {
