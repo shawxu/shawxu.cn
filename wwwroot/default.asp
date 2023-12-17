@@ -3,7 +3,7 @@
   var _t0 = new Date();
   Response.charset = "utf-8";
 %>
-<!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/uuid.inc" -->
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -23,10 +23,16 @@
         %>
         Application started at: <%= dateValueAppStart %> => <%= dateAppStart.toString() %><br>
         Now: <%= (new Date()).valueOf() %><br>
+        No TypedArray: <%= "undefined" == typeof Uint8Array %><br>
         Session.LCID: <%= Session.LCID %><br>
         Session.codePage: <%= Session.codePage %><br>
         Session.sessionID: <%= Session.sessionID %><br>
-        Path: <%= Server.mapPath("/") + "\\App_Data\\xxblog.accdb;" %>
+        md5: <%= XXASP.md5("Hello world!") %><br>
+        sha1: <%= XXASP.sha1("Hello world!") %><br>
+        uuid v1: <%= XXASP.UUID.v1() %><br>
+        uuid v3: <%= XXASP.UUID.v3("xxblog", "710b962e-041c-11e1-9234-0123456789ab") %><br>
+        uuid v4: <%= XXASP.UUID.v4() %><br>
+        uuid v5: <%= XXASP.UUID.v5("xxblog", "710b962e-041c-11e1-9234-0123456789ab") %><br>
       </h6>
 			<%
         for(var itr = new Enumerator(Session.contents), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
@@ -35,8 +41,6 @@
         tmp.push(Request.cookies.count);
         Response.write(tmp.join("<br>") + "<br>");
         Response.flush();
-
-        //XXASP.sleep(2);
 
         for(var itr = new Enumerator(Request.serverVariables), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
           if(itm == "ALL_HTTP" || itm == "ALL_RAW"){

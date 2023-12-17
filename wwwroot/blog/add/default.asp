@@ -27,17 +27,11 @@
 
   connAccessDb = Server.createObject("ADODB.Connection");
   var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
-  //var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.mdb"; //GOOD 32bit driver
   var connStr = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
-  //var connStr = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + dbFilePath + ";Uid=Admin;Pwd=;"; //GOOD 32bit driver
-  //var connStr = "Driver={Microsoft Access Driver (*.mdb, *.accdb)};Dbq=" + dbFilePath + ";Uid=Admin;Pwd=;"; //GOOD 64bit driver
-  
   connAccessDb.open(connStr);
-  //connAccessDb.open("DSN=xxBlog"); //GOOD!! 64 bit dsn
-  //connAccessDb.open("DSN=xxBlog32"); //GOOD!! 32 bit dsn
 
+  //ID* Title Content PubTime UpdateTime ShowID
   connAccessDb.close();
-
   delete connAccessDb;
 
 %>
