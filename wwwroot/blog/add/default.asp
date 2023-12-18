@@ -9,13 +9,13 @@
 
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <%
   var totalByteLength = Request.totalBytes;
   var contentLengthHeader = Request.serverVariables("CONTENT_LENGTH");
   var formPostData = "";
   var strBoundary = "";
   var objFormData;
-  var connAccessDb;
 
   //获取multipart form data的分隔符特征串
   strBoundary = XXASP.getBoundaryStr(Request);
@@ -25,12 +25,21 @@
 
   objFormData = XXASP.parseMultipartData(formPostData, strBoundary);
 
-  connAccessDb = Server.createObject("ADODB.Connection");
+  var connAccessDb = Server.createObject("ADODB.Connection");
   var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
-  var connStr = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
-  connAccessDb.open(connStr);
+  connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
+  connAccessDb.open();
 
-  //ID* Title Content PubTime UpdateTime ShowID
+  var dateTime = new Date();
+  var objAdoCmd = Server.createObject("ADODB.Command");
+  objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, PubTime, UpdateTime, OwnerID) VALUES ('" + XXASP.UUID.v4() +
+    "', 'Hello " + objFormData.title + "', '" + objFormData.content + "', '2023/11/06 17:28:00', '2023/11/24 08:39:00', '1')";
+  objAdoCmd.activeConnection = connAccessDb;
+  objAdoCmd.commandType = adCmdText;
+  objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
+  objAdoCmd.execute();
+
+  //ID* ShowID Title Content PubTime UpdateTime OwnerID
   connAccessDb.close();
   delete connAccessDb;
 

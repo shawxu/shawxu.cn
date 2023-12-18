@@ -1,11 +1,19 @@
 <%
   if (typeof XXASP != "object") {
-    XXASP = {
-      RETURN_CODE: {
+    XXASP = {};
+  }
+
+  if (typeof XXASP.RETURN_CODE != "object") {
+    XXASP.RETURN_CODE = {
         OK: 0,
         NO_SYS_OBJ: 400
-      }
-    };
+      };
+  }
+
+  if (typeof XXASP.TIMEOUT != "object") {
+    XXASP.TIMEOUT = {
+        DB_INSERT: 3
+      };
   }
 
   //获取multipart form data分割特征串的工具方法

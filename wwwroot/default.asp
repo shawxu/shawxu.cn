@@ -3,7 +3,7 @@
   var _t0 = new Date();
   Response.charset = "utf-8";
 %>
-<!-- #include virtual = "/Lib_SSI/uuid.inc" -->
+<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
