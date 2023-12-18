@@ -5,8 +5,6 @@
   var _t0 = new Date();
 %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
-<!-- #include virtual = "/Lib_SSI/json2.js.inc" -->
-
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
@@ -32,15 +30,19 @@
 
   var dateTime = new Date();
   var objAdoCmd = Server.createObject("ADODB.Command");
-  objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, PubTime, UpdateTime, OwnerID) VALUES ('" + XXASP.UUID.v4() +
-    "', 'Hello " + objFormData.title + "', '" + objFormData.content + "', '2023/11/06 17:28:00', '2023/11/24 08:39:00', '1')";
+  objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, " +
+    "PubTime, UpdateTime, OwnerID) VALUES ('" + XXASP.UUID.v4() +
+    "', '" + objFormData.title + "', '" + objFormData.content + 
+    "', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + 
+    "', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + "', 1)";
+
   objAdoCmd.activeConnection = connAccessDb;
   objAdoCmd.commandType = adCmdText;
   objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
   objAdoCmd.execute();
 
-  //ID* ShowID Title Content PubTime UpdateTime OwnerID
   connAccessDb.close();
+  delete objAdoCmd;
   delete connAccessDb;
 
 %>
