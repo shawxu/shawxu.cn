@@ -100,5 +100,29 @@
     return rest.join("&");
   };
 
+  if (typeof XXASP.UTILS != "object") {
+    XXASP.UTILS = {};
+  }
+
+  XXASP.UTILS.toDBDateTimeString = function(objDT, withMsec) {
+    if ("undefined" == typeof objDT || "function" != typeof objDT.getUTCFullYear) {
+      objDT = new Date();
+    }
+
+    var arrDT = [];
+    arrDT.push(objDT.getUTCFullYear(), "-",
+      objDT.getUTCMonth() + 1, "-",
+      objDT.getUTCDate(), " ",
+      objDT.getUTCHours(), ":",
+      objDT.getUTCMinutes(), ":",
+      objDT.getUTCSeconds());
+    
+    if (!!withMsec) {
+      arrDT.push(".", objDT.getUTCMilliseconds());
+    }
+    
+    return arrDT.join("");
+  }
+
 
 %>
