@@ -17,31 +17,44 @@
 <body>
 	<main id="container">
 		<article>
-			<% Response.Write(
-        Session.LCID + "<br>" +
-        Session.codePage + "<br>" +
-        Session.SessionID + "<br>"
-      );
+			<%
+        Response.Write(
+          Session.LCID + "<br>" +
+          Session.codePage + "<br>" +
+          Session.SessionID + "<br>"
+        );
 
-      for(var itr = new Enumerator(Session.Contents), itm = null; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
-        Response.Write(itm + " : " + Session(itm) + "<br>");
-      }
-      Response.Write("Hello world! " + Session("uname"));
+        for(var itr = new Enumerator(Session.Contents), itm = null; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
+          Response.Write(itm + " : " + Session(itm) + "<br>");
+        }
+        Response.Write("Hello world! " + Session("uname"));
       %>
       <br>
 		</article>
     <article>
     <%
       var connAccessDb = Server.createObject("ADODB.Connection");
+      var rSet = Server.createObject("ADODB.RecordSet");
       var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
       connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
       connAccessDb.open();
 
+      rSet.open("SELECT * FROM Blog", connAccessDb, adOpenForwardOnly);
+      var strTable = rSet.getString(adClipString, 200, "</td><td>", "</td></tr><tr><td>", "&nbsp;");
+
+      rSet.close();
       connAccessDb.close();
-      //delete objAdoCmd;
+      delete rSet;
       delete connAccessDb;
     %>
     <%= dbFilePath %>
+    <pre><table>
+      <tbody>
+        <tr>
+          <td><%= strTable %></td>
+        </tr>
+      </tbody>
+    </table></pre>
     </article>
 	</main>
 </body>

@@ -3,6 +3,21 @@
     JSON = {};
   }
 
+  JSON.escSQLString = function (str) {
+    var CHARS_GLOBAL_REGEXP = /[\']/g;
+    var CHARS_ESCAPE_MAP    = {
+      "'"   : "''"
+    };
+
+    if(!str) {
+      return "";
+    }
+    return str.replace(CHARS_GLOBAL_REGEXP, function(a) {
+      return CHARS_ESCAPE_MAP[a];
+    });
+  };
+
+
   //插入JSON的字符串字面量时需要做必要的转义
   JSON.escString = function(str) {
     var RE = /[\\\n\r\t\"]/g;

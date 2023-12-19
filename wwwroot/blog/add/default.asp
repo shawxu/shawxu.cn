@@ -1,8 +1,8 @@
 <%@ language="jscript" codepage="65001"%>
 <%
+  var _t0 = new Date();
   Response.contentType = "application/json";
   Response.charSet = "utf-8";
-  var _t0 = new Date();
 %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
@@ -32,16 +32,18 @@
   var objAdoCmd = Server.createObject("ADODB.Command");
   objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, " +
     "PubTime, UpdateTime, OwnerID) VALUES ('" + XXASP.UUID.v4() +
-    "', '?', '?', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + 
+    "', '" + JSON.escSQLString(objFormData.title) +
+    "', '" + JSON.escSQLString(objFormData.content) +
+    "', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + 
     "', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + "', 1)";
 
-  var cmdParam1 = objAdoCmd.createParameter("title", adVarWChar, adParamInput,
-    objFormData.title.length + 2, objFormData.title);
-  var cmdParam2 = objAdoCmd.createParameter("content", adVarWChar, adParamInput,
-    objFormData.content.length + 2, objFormData.content);
+  /*var cmdParam1 = objAdoCmd.createParameter("Title", adLongVarWChar, adParamInput,
+    objFormData.title.length, objFormData.title);
+  var cmdParam2 = objAdoCmd.createParameter("Content", adLongVarWChar, adParamInput,
+    objFormData.content.length, objFormData.content);
 
   objAdoCmd.parameters.append(cmdParam1);
-  objAdoCmd.parameters.append(cmdParam2);
+  objAdoCmd.parameters.append(cmdParam2);*/
 
   objAdoCmd.activeConnection = connAccessDb;
   objAdoCmd.commandType = adCmdText;
