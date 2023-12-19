@@ -1,4 +1,12 @@
-<%@ language="jscript" %>
+<%@ language="jscript" codepage="65001"%>
+<!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
+<!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
+<%
+  Response.charSet = "utf-8";
+  var _t0 = new Date();
+%>
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -15,7 +23,6 @@
         Session.SessionID + "<br>"
       );
 
-      //Session("uname") = "xx";
       for(var itr = new Enumerator(Session.Contents), itm = null; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
         Response.Write(itm + " : " + Session(itm) + "<br>");
       }
@@ -23,6 +30,19 @@
       %>
       <br>
 		</article>
+    <article>
+    <%
+      var connAccessDb = Server.createObject("ADODB.Connection");
+      var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
+      connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
+      connAccessDb.open();
+
+      connAccessDb.close();
+      //delete objAdoCmd;
+      delete connAccessDb;
+    %>
+    <%= dbFilePath %>
+    </article>
 	</main>
 </body>
 </html>
