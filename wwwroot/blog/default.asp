@@ -14,11 +14,25 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>shawxu.cn /blog</title>
   <style>
-    caption {
-      caption-side:bottom;
+    table {
+      width:1200px;
     }
-    tbody {
-      font-size:x-small;
+    /*caption {
+      caption-side:bottom;
+    }*/
+    tbody, thead {
+      font-size:0.75rem;
+    }
+    .words {
+      font-size:0.6rem;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .blogtitle {
+      width:160px;
+    }
+    .blogcontent {
+      width:480px;
     }
   </style>
 </head>
@@ -52,14 +66,17 @@
       var restArrStr = [];
       var rCnt = 0;
 
-      restArrStr.push("<table style=\"width:1280px;\"><caption>Blog</caption>");
+      restArrStr.push("<table><caption>Blog</caption>");
       while (!rSet.EOF) {
-        if (rCnt == 0) {
+        if (rCnt == 0) { //展现表头
           restArrStr.push("<thead><tr>");
           for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
             switch (rSet.fields(i).name) {
               case "Content":
-                restArrStr.push("<th style=\"width:480px;\">");
+                restArrStr.push("<th class=\"blogcontent\">");
+                break;
+              case "Title":
+                restArrStr.push("<th class=\"blogtitle\">");
                 break;
               default:
                 restArrStr.push("<th>");
@@ -67,13 +84,15 @@
             restArrStr.push(rSet.fields(i).name, "</th>");
           }
           restArrStr.push("</tr></thead><tbody>");
-        }
+        } //表头展现结束
         restArrStr.push("<tr>");
         for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
           switch (rSet.fields(i).name) {
             case "Content":
-            case "Title":
-              restArrStr.push("<td style=\"white-space:pre;\">");
+               restArrStr.push("<td class=\"blogcontent words\">");
+              break;
+           case "Title":
+              restArrStr.push("<td class=\"blogtitle words\">");
               break;
             default:
               restArrStr.push("<td>");
