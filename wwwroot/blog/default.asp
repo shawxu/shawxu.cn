@@ -13,6 +13,14 @@
   <meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>shawxu.cn /blog</title>
+  <style>
+    caption {
+      caption-side:bottom;
+    }
+    tbody {
+      font-size:x-small;
+    }
+  </style>
 </head>
 <body>
 	<main id="container">
@@ -40,7 +48,45 @@
       connAccessDb.open();
 
       rSet.open("SELECT * FROM Blog", connAccessDb, adOpenForwardOnly);
-      var strTable = rSet.getString(adClipString, 200, "</td><td>", "</td></tr><tr><td>", "&nbsp;");
+      //var strTable = rSet.getString(adClipString, 200, "</td><td>", "</td></tr><tr><td>", "&nbsp;");
+      var restArrStr = [];
+      var rCnt = 0;
+
+      restArrStr.push("<table style=\"width:1280px;\"><caption>Blog</caption>");
+      while (!rSet.EOF) {
+        if (rCnt == 0) {
+          restArrStr.push("<thead><tr>");
+          for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
+            switch (rSet.fields(i).name) {
+              case "Content":
+                restArrStr.push("<th style=\"width:480px;\">");
+                break;
+              default:
+                restArrStr.push("<th>");
+            }
+            restArrStr.push(rSet.fields(i).name, "</th>");
+          }
+          restArrStr.push("</tr></thead><tbody>");
+        }
+        restArrStr.push("<tr>");
+        for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
+          switch (rSet.fields(i).name) {
+            case "Content":
+            case "Title":
+              restArrStr.push("<td style=\"white-space:pre;\">");
+              break;
+            default:
+              restArrStr.push("<td>");
+          }
+
+          restArrStr.push(rSet.fields(i).value, "</td>");
+        }
+        restArrStr.push("</tr>");
+
+        rSet.moveNext();
+        ++rCnt;
+      }
+      restArrStr.push("</tbody></table>");
 
       rSet.close();
       connAccessDb.close();
@@ -48,13 +94,7 @@
       rSet = null;
       connAccessDb = null;
     %>
-    <pre><table>
-      <tbody>
-        <tr>
-          <td><%= strTable %></td>
-        </tr>
-      </tbody>
-    </table></pre>
+    <%= restArrStr.join("") %>
     </article>
 	</main>
 </body>

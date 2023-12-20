@@ -32,17 +32,15 @@
   var objAdoCmd = Server.createObject("ADODB.Command");
 
   objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, " +
-    "PubTime, UpdateTime, OwnerID) VALUES ('" + XXASP.UUID.v4() +
-    "', :title, :content, '" + XXASP.UTILS.toDBDateTimeString(dateTime) + 
+    "PubTime, UpdateTime, OwnerID) VALUES (:uuidv4, :title, :content, '" + XXASP.UTILS.toDBDateTimeString(dateTime) +
     "', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + "', 1)";
 
-  var cmdParam1 = objAdoCmd.createParameter("title", adLongVarWChar, adParamInput,
-    objFormData.title.length, objFormData.title);
-  var cmdParam2 = objAdoCmd.createParameter("content", adLongVarWChar, adParamInput,
-    objFormData.content.length, objFormData.content);
-
-  objAdoCmd.parameters.append(cmdParam1);
-  objAdoCmd.parameters.append(cmdParam2);
+  objAdoCmd.parameters.append(objAdoCmd.createParameter("uuidv4", adVarChar, adParamInput,
+    38, XXASP.UUID.v4()));
+  objAdoCmd.parameters.append(objAdoCmd.createParameter("title", adLongVarWChar, adParamInput,
+    objFormData.title.length, objFormData.title));
+  objAdoCmd.parameters.append(objAdoCmd.createParameter("content", adLongVarWChar, adParamInput,
+    objFormData.content.length, objFormData.content));
 
   objAdoCmd.activeConnection = connAccessDb;
   objAdoCmd.commandType = adCmdText;
