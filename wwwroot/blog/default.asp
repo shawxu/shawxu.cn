@@ -10,18 +10,24 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="https://s3.shawxu.net/images/favicons/xx-v1/favicon.ico">
+  <link rel="stylesheet" href="https://s3.shawxu.net/css/bootstrap.min.css">
 	<title>shawxu.cn /blog</title>
   <style>
     table {
       width:1200px;
     }
-    /*caption {
-      caption-side:bottom;
-    }*/
+    caption {
+      caption-side:top;
+    }
     tbody, thead {
       font-size:0.75rem;
+    }
+    td, th {
+      max-height:50px;
+      overflow:hidden;
     }
     .words {
       font-size:0.6rem;
@@ -39,81 +45,75 @@
 <body>
 	<main id="container">
 		<article>
+      <h5>Session ID: <%= Session.SessionID %></h5>
 			<%
-        Response.Write(
-          Session.LCID + "<br>" +
-          Session.codePage + "<br>" +
-          Session.SessionID + "<br>"
-        );
-
         for(var itr = new Enumerator(Session.Contents), itm = null; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
           Response.Write(itm + " : " + Session(itm) + "<br>");
         }
-        Response.Write("Hello world! " + Session("uname"));
       %>
-      <br>
 		</article>
     <article>
-    <%
-      var connAccessDb = Server.createObject("ADODB.Connection");
-      var rSet = Server.createObject("ADODB.Recordset");
-      var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
-      connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
-      connAccessDb.open();
+      <h6>Hello <%= Session("uname") %></h6>
+      <%
+        var connAccessDb = Server.createObject("ADODB.Connection");
+        var rSet = Server.createObject("ADODB.Recordset");
+        var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
+        connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
+        connAccessDb.open();
 
-      rSet.open("SELECT * FROM Blog", connAccessDb, adOpenForwardOnly);
-      //var strTable = rSet.getString(adClipString, 200, "</td><td>", "</td></tr><tr><td>", "&nbsp;");
-      var restArrStr = [];
-      var rCnt = 0;
+        rSet.open("SELECT * FROM Blog", connAccessDb, adOpenForwardOnly);
+        //var strTable = rSet.getString(adClipString, 200, "</td><td>", "</td></tr><tr><td>", "&nbsp;");
+        var restArrStr = [];
+        var rCnt = 0;
 
-      restArrStr.push("<table><caption>Blog</caption>");
-      while (!rSet.EOF) {
-        if (rCnt == 0) { //展现表头
-          restArrStr.push("<thead><tr>");
+        restArrStr.push("<table><caption>Table Blog</caption>");
+        while (!rSet.EOF) {
+          if (rCnt == 0) { //展现表头
+            restArrStr.push("<thead><tr>");
+            for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
+              switch (rSet.fields(i).name) {
+                case "Content":
+                  restArrStr.push("<th class=\"blogcontent\">");
+                  break;
+                case "Title":
+                  restArrStr.push("<th class=\"blogtitle\">");
+                  break;
+                default:
+                  restArrStr.push("<th>");
+              }
+              restArrStr.push(rSet.fields(i).name, "</th>");
+            }
+            restArrStr.push("</tr></thead><tbody>");
+          } //表头展现结束
+          restArrStr.push("<tr>");
           for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
             switch (rSet.fields(i).name) {
               case "Content":
-                restArrStr.push("<th class=\"blogcontent\">");
+                restArrStr.push("<td class=\"blogcontent words\">");
                 break;
               case "Title":
-                restArrStr.push("<th class=\"blogtitle\">");
+                restArrStr.push("<td class=\"blogtitle words\">");
                 break;
               default:
-                restArrStr.push("<th>");
+                restArrStr.push("<td>");
             }
-            restArrStr.push(rSet.fields(i).name, "</th>");
-          }
-          restArrStr.push("</tr></thead><tbody>");
-        } //表头展现结束
-        restArrStr.push("<tr>");
-        for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
-          switch (rSet.fields(i).name) {
-            case "Content":
-               restArrStr.push("<td class=\"blogcontent words\">");
-              break;
-           case "Title":
-              restArrStr.push("<td class=\"blogtitle words\">");
-              break;
-            default:
-              restArrStr.push("<td>");
-          }
 
-          restArrStr.push(rSet.fields(i).value, "</td>");
+            restArrStr.push(rSet.fields(i).value, "</td>");
+          }
+          restArrStr.push("</tr>");
+
+          rSet.moveNext();
+          ++rCnt;
         }
-        restArrStr.push("</tr>");
+        restArrStr.push("</tbody></table>");
 
-        rSet.moveNext();
-        ++rCnt;
-      }
-      restArrStr.push("</tbody></table>");
+        rSet.close();
+        connAccessDb.close();
 
-      rSet.close();
-      connAccessDb.close();
-
-      rSet = null;
-      connAccessDb = null;
-    %>
-    <%= restArrStr.join("") %>
+        rSet = null;
+        connAccessDb = null;
+      %>
+      <%= restArrStr.join("") %>
     </article>
 	</main>
 </body>
