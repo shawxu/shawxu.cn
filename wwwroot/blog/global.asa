@@ -6,15 +6,28 @@ function Application_OnStart() {
 
 function Session_OnStart() {
   Session.contents("uname") = "Xx";
+
+  var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb";
+  Session.contents("dbConnString") =
+    connAccessDb.connectionString =
+    "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;";
+  connAccessDb.connectionTimeout = 5;
 }
 
 function Session_OnEnd() {
   Session.contents.remove("uname");
+
+  var adStateClosed = 0x00000000;
+  if (connAccessDb.state != adStateClosed) {
+    connAccessDb.close();
+  }
+  Session.contents.remove("dbConnString");
 }
 
 
 function Application_OnEnd() {
 
 }
-
 </script>
+<object runat="server" scope="session" id="connAccessDb" progid="ADODB.Connection">
+</object>

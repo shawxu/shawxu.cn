@@ -12,7 +12,8 @@
 
   if (typeof XXASP.TIMEOUT != "object") {
     XXASP.TIMEOUT = {
-        DB_INSERT: 3
+        DB_INSERT: 3,
+        DB_CONN: 5
       };
   }
 

@@ -23,10 +23,18 @@
 
   objFormData = XXASP.parseMultipartData(formPostData, strBoundary);
 
-  var connAccessDb = Server.createObject("ADODB.Connection");
-  var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb";
-  connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;";
-  connAccessDb.open();
+  var connAccessDb = Session.staticObjects("connAccessDb");
+
+  if ("object" == typeof connAccessDb) {
+    if (connAccessDb.state == adStateClosed) {
+      connAccessDb.open();
+    }
+  } else {
+    connAccessDb = Server.createObject("ADODB.Connection");
+    connAccessDb.connectionString = Session.contents("dbConnString");
+    connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
+    connAccessDb.open();
+  }
 
   var dateTime = new Date();
   var objAdoCmd = Server.createObject("ADODB.Command");
@@ -49,16 +57,15 @@
   objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
   objAdoCmd.execute();
 
-  connAccessDb.close();
   objAdoCmd = null;
-  connAccessDb = null;
+  //connAccessDb.close();
+  //connAccessDb = null;
 %>
 {
   "code" : 0,
   "msg" : "<%= contentLengthHeader %>, ok",
   "bodyLength" : "<%= totalByteLength %>",
   "duration" : "<%= (new Date() - _t0) %>",
-  "dbPath" : "<%= JSON.escString(dbFilePath) %>",
   "boundary" : "<%= JSON.escString(strBoundary) %>",
   "reqBodyDecoded" : "<%= JSON.escString(XXASP.dataMapQueryStringify(objFormData)) %>",
   "reqBodyJSON" : 
