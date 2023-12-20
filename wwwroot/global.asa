@@ -2,21 +2,21 @@
 
 function Application_OnStart() {
   var t0 = new Date();
-  Application.Contents("XXASP_APP_START") = t0.getTime();
+  Application.contents("XXASP_APP_START") = t0.getTime();
 }
 
 function Session_OnStart() {
   var t0 = new Date();
-  Session.Contents("XXASP_SN_START") = t0.getTime();
+  Session.contents("XXASP_SN_START") = t0.getTime();
 }
 
 function Session_OnEnd() {
-  Session.Contents.remove("XXASP_SN_START");
+  Session.contents.remove("XXASP_SN_START");
 }
 
 
 function Application_OnEnd() {
-  Application.Contents.remove("XXASP_APP_START");
+  Application.contents.remove("XXASP_APP_START");
 }
 
 </script>

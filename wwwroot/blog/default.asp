@@ -47,7 +47,7 @@
 		<article>
       <h5>Session ID: <%= Session.SessionID %></h5>
 			<%
-        for(var itr = new Enumerator(Session.Contents), itm = null; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
+        for(var itr = new Enumerator(Session.contents), itm = null; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {
           Response.Write(itm + " : " + Session(itm) + "<br>");
         }
       %>
@@ -56,13 +56,13 @@
       <h6>Hello <%= Session("uname") %></h6>
       <%
         var connAccessDb = Server.createObject("ADODB.Connection");
-        var rSet = Server.createObject("ADODB.Recordset");
-        var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
-        connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
+        var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb";
+        connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;";
         connAccessDb.open();
 
+        var rSet = Server.createObject("ADODB.Recordset");
+
         rSet.open("SELECT * FROM Blog", connAccessDb, adOpenForwardOnly);
-        //var strTable = rSet.getString(adClipString, 200, "</td><td>", "</td></tr><tr><td>", "&nbsp;");
         var restArrStr = [];
         var rCnt = 0;
 
@@ -114,6 +114,7 @@
         connAccessDb = null;
       %>
       <%= restArrStr.join("") %>
+      Duration: <%= new Date() - _t0 %>
     </article>
 	</main>
 </body>

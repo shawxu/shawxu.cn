@@ -24,8 +24,8 @@
   objFormData = XXASP.parseMultipartData(formPostData, strBoundary);
 
   var connAccessDb = Server.createObject("ADODB.Connection");
-  var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
-  connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
+  var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb";
+  connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;";
   connAccessDb.open();
 
   var dateTime = new Date();
@@ -52,7 +52,6 @@
   connAccessDb.close();
   objAdoCmd = null;
   connAccessDb = null;
-
 %>
 {
   "code" : 0,

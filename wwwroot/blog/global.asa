@@ -5,11 +5,11 @@ function Application_OnStart() {
 }
 
 function Session_OnStart() {
-  Session.Contents("uname") = "Xx";
+  Session.contents("uname") = "Xx";
 }
 
 function Session_OnEnd() {
-  Session.Contents.Remove("uname");
+  Session.contents.remove("uname");
 }
 
 

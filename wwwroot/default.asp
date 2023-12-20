@@ -20,7 +20,7 @@
 		<article>
       <h6>
         <%
-          var dateValueAppStart = Number(Application.Contents("XXASP_APP_START"));
+          var dateValueAppStart = Number(Application.contents("XXASP_APP_START"));
           var dateAppStart = new Date(dateValueAppStart);
         %>
         Application started at: <%= dateValueAppStart %> => <%= dateAppStart.toString() %><br>
