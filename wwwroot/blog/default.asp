@@ -4,8 +4,8 @@
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <%
-  Response.charSet = "utf-8";
   var _t0 = new Date();
+  Response.charSet = "utf-8";
 %>
 <!DOCTYPE html>
 <html lang="zh-cn">
@@ -34,7 +34,7 @@
     <article>
     <%
       var connAccessDb = Server.createObject("ADODB.Connection");
-      var rSet = Server.createObject("ADODB.RecordSet");
+      var rSet = Server.createObject("ADODB.Recordset");
       var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
       connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
       connAccessDb.open();
@@ -44,10 +44,10 @@
 
       rSet.close();
       connAccessDb.close();
-      delete rSet;
-      delete connAccessDb;
+
+      rSet = null;
+      connAccessDb = null;
     %>
-    <%= dbFilePath %>
     <pre><table>
       <tbody>
         <tr>

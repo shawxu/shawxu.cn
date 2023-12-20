@@ -30,20 +30,19 @@
 
   var dateTime = new Date();
   var objAdoCmd = Server.createObject("ADODB.Command");
+
   objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, " +
     "PubTime, UpdateTime, OwnerID) VALUES ('" + XXASP.UUID.v4() +
-    "', '" + JSON.escSQLString(objFormData.title) +
-    "', '" + JSON.escSQLString(objFormData.content) +
-    "', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + 
+    "', :title, :content, '" + XXASP.UTILS.toDBDateTimeString(dateTime) + 
     "', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + "', 1)";
 
-  /*var cmdParam1 = objAdoCmd.createParameter("Title", adLongVarWChar, adParamInput,
+  var cmdParam1 = objAdoCmd.createParameter("title", adLongVarWChar, adParamInput,
     objFormData.title.length, objFormData.title);
-  var cmdParam2 = objAdoCmd.createParameter("Content", adLongVarWChar, adParamInput,
+  var cmdParam2 = objAdoCmd.createParameter("content", adLongVarWChar, adParamInput,
     objFormData.content.length, objFormData.content);
 
   objAdoCmd.parameters.append(cmdParam1);
-  objAdoCmd.parameters.append(cmdParam2);*/
+  objAdoCmd.parameters.append(cmdParam2);
 
   objAdoCmd.activeConnection = connAccessDb;
   objAdoCmd.commandType = adCmdText;
@@ -51,8 +50,8 @@
   objAdoCmd.execute();
 
   connAccessDb.close();
-  delete objAdoCmd;
-  delete connAccessDb;
+  objAdoCmd = null;
+  connAccessDb = null;
 
 %>
 {
