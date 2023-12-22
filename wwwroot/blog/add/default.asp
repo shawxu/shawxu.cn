@@ -23,18 +23,10 @@
 
   objFormData = XXASP.parseMultipartData(formPostData, strBoundary);
 
-  var connAccessDb = Session.staticObjects("connAccessDb");
-
-  if ("object" == typeof connAccessDb) {
-    if (connAccessDb.state == adStateClosed) {
-      connAccessDb.open();
-    }
-  } else {
-    connAccessDb = Server.createObject("ADODB.Connection");
-    connAccessDb.connectionString = Session.contents("dbConnString");
-    connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
-    connAccessDb.open();
-  }
+  var connAccessDb = Server.createObject("ADODB.Connection");
+  connAccessDb.connectionString = Session.contents("dbConnString");
+  connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
+  connAccessDb.open();
 
   var dateTime = new Date();
   var objAdoCmd = Server.createObject("ADODB.Command");
@@ -58,8 +50,8 @@
   objAdoCmd.execute();
 
   objAdoCmd = null;
-  //connAccessDb.close();
-  //connAccessDb = null;
+  connAccessDb.close();
+  connAccessDb = null;
 %>
 {
   "code" : 0,
