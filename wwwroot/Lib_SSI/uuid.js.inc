@@ -19,6 +19,24 @@
       return typeof uuid === 'string' && REGEX.test(uuid);
     }
 
+    function commonStringify(arr) {
+      var rslt, tmp;
+      if("object" == typeof arr && "undefined" != typeof arr.length && arr.length > 0) {
+        rslt = [];
+        for(var i = 0, l = arr.length; i < l; ++i) {
+          if("number" == typeof arr[i]) {
+            tmp = Math.abs(Math.round(arr[i])) % 256;
+            rslt.push(byteToHex[tmp]);
+          } else {
+            rslt.push("00");
+          }
+        }
+        return rslt.join("");
+      } else {
+        return "";
+      }
+    }
+
     function unsafeStringify(arr, offset) {
       // Note: Be careful editing this code!  It's been tuned for performance
       // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
@@ -242,8 +260,8 @@
       return bytes;
     }
 
-    var DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
-    var URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
+    var DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8'; //default
+    var URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8'; //default
 
     function v35(name, version, hashfunc) {
       function generateUUID(value, namespace, buf, offset) {
@@ -666,6 +684,7 @@
     XXASP.UUID.v5 = v35('v5', 0x50, sha1);
     XXASP.md5 = md5;
     XXASP.sha1 = sha1;
+    XXASP.hashStringify = commonStringify;
 
   })();
 %>
