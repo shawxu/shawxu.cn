@@ -18,19 +18,6 @@
 <%
   var formData = XXASP.parseFormData(Request);
 
-  /*var totalByteLength = Request.totalBytes;
-  var contentLengthHeader = Request.serverVariables("CONTENT_LENGTH");
-  var formPostData = "";
-  var strBoundary = "";
-  var objFormData;
-
-  //获取multipart form data的分隔符特征串
-  strBoundary = XXASP.getBoundaryStr(Request);
-
-  //流式读取出post data
-  formPostData = XXASP.readPostStream(Request);
-
-  objFormData = XXASP.parseMultipartData(formPostData, strBoundary);
 
   var connAccessDb = Server.createObject("ADODB.Connection");
   connAccessDb.connectionString = Session.contents("dbConnString");
@@ -40,18 +27,26 @@
   var dateTime = new Date();
   var objAdoCmd = Server.createObject("ADODB.Command");
 
-  objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, PubTime, UpdateTime, OwnerID) VALUES (:uuidv4, :title, :content, :pubtime, :updtime, 1)";
+  var uuidBase = XXASP.UUID.v3(formData.email, XXASP.UUID.v3.DNS);
+  var showID = XXASP.UUID.v5(formData.pwd, uuidBase);
 
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("uuidv4", adVarChar, adParamInput,
-    38, XXASP.UUID.v4()));
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("title", adLongVarWChar, adParamInput,
-    objFormData.title.length, objFormData.title));
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("content", adLongVarWChar, adParamInput,
-    objFormData.content.length, objFormData.content));
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("pubtime", adDBTimeStamp, adParamInput,
-    20, XXASP.UTILS.toDBDateTimeString(dateTime)));
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("updtime", adDBTimeStamp, adParamInput,
-    20, XXASP.UTILS.toDBDateTimeString(dateTime)));
+  objAdoCmd.commandText = "INSERT INTO Account (ShowID, Email, PasswordHash, SignUpTime) VALUES (:showid, :email, :pwdhash, :signuptime)";
+
+  objAdoCmd.parameters.append(objAdoCmd.createParameter("showid", adVarChar, adParamInput,
+    38, showID));
+
+  objAdoCmd.parameters.append(objAdoCmd.createParameter("email", adVarChar, adParamInput,
+    formData.email.length, formData.email));
+
+  /* =============================== */
+  var signupTime = XXASP.UTILS.toDBDateTimeString(dateTime);
+  var pwdHash = XXASP.hashStringify(XXASP.sha1(formData.pwd + showID + signupTime)); //!!!!
+  /* =============================== */
+  objAdoCmd.parameters.append(objAdoCmd.createParameter("pwdhash", adVarChar, adParamInput,
+    pwdHash.length, pwdHash));
+
+  objAdoCmd.parameters.append(objAdoCmd.createParameter("signuptime", adDBTimeStamp, adParamInput,
+    20, signupTime));
 
   objAdoCmd.activeConnection = connAccessDb;
   objAdoCmd.commandType = adCmdText;
@@ -60,7 +55,7 @@
 
   objAdoCmd = null;
   connAccessDb.close();
-  connAccessDb = null;*/
+  connAccessDb = null;
 %>
   <script>
     window.parent.postMessage(<%= JSON.stringify(formData) %>, "*");
