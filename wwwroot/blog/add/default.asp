@@ -23,35 +23,40 @@
 
   objFormData = XXASP.parseMultipartData(formPostData, strBoundary);
 
-  var connAccessDb = Server.createObject("ADODB.Connection");
-  connAccessDb.connectionString = Session.contents("dbConnString");
-  connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
-  connAccessDb.open();
+  if (!objFormData.title || !objFormData.content) {
+    //没从POST负载解析出指定的数据
+  } else {
+    var connAccessDb = Server.createObject("ADODB.Connection");
+    connAccessDb.connectionString = Session.contents("dbConnString");
+    connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
+    connAccessDb.open();
 
-  var dateTime = new Date();
-  var objAdoCmd = Server.createObject("ADODB.Command");
+    var dateTime = new Date();
+    var objAdoCmd = Server.createObject("ADODB.Command");
 
-  objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, PubTime, UpdateTime, OwnerID) VALUES (:uuidv4, :title, :content, :pubtime, :updtime, 1)";
+    objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, PubTime, UpdateTime, OwnerID) VALUES (:uuidv4, :title, :content, :pubtime, :updtime, 1)";
 
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("uuidv4", adVarChar, adParamInput,
-    38, XXASP.UUID.v4()));
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("title", adLongVarWChar, adParamInput,
-    objFormData.title.length, objFormData.title));
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("content", adLongVarWChar, adParamInput,
-    objFormData.content.length, objFormData.content));
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("pubtime", adDBTimeStamp, adParamInput,
-    20, XXASP.UTILS.toDBDateTimeString(dateTime)));
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("updtime", adDBTimeStamp, adParamInput,
-    20, XXASP.UTILS.toDBDateTimeString(dateTime)));
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("uuidv4", adVarChar, adParamInput,
+      38, XXASP.UUID.v4()));
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("title", adLongVarWChar, adParamInput,
+      objFormData.title.length, objFormData.title));
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("content", adLongVarWChar, adParamInput,
+      objFormData.content.length, objFormData.content));
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("pubtime", adDBTimeStamp, adParamInput,
+      20, XXASP.UTILS.toDBDateTimeString(dateTime)));
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("updtime", adDBTimeStamp, adParamInput,
+      20, XXASP.UTILS.toDBDateTimeString(dateTime)));
 
-  objAdoCmd.activeConnection = connAccessDb;
-  objAdoCmd.commandType = adCmdText;
-  objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
-  objAdoCmd.execute();
+    objAdoCmd.activeConnection = connAccessDb;
+    objAdoCmd.commandType = adCmdText;
+    objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
+    objAdoCmd.execute();
 
-  objAdoCmd = null;
-  connAccessDb.close();
-  connAccessDb = null;
+    objAdoCmd = null;
+    connAccessDb.close();
+    connAccessDb = null;
+  }
+
 %>
 {
   "code" : 0,

@@ -41,7 +41,7 @@
 
 
   //解析multipart form data本体，到map结构
-  XXASP.parseMultipartData = function(srcData, strBdr){
+  XXASP.parseMultipartData = function(srcData, strBdr) {
     var resMap = {};
     if("string" != typeof srcData || "string" != typeof strBdr || srcData.length < 1 || strBdr.length < 1){
       return resMap;
@@ -64,17 +64,47 @@
     return resMap;
   };
 
+  XXASP.parseFormData = function(objRequest) {
+    var rsltMap = {};
+
+    for (var itr = new Enumerator(objRequest.form), itm = null, kn = "", vlu = ""; !itr.atEnd(), kn = itr.item(); itr.moveNext()) {
+      itm = objRequest.form(kn);
+
+      if ("object" == typeof itm && "number" == typeof itm.count) {
+        if (1 === itm.count) {
+          rsltMap[kn] = itm(1);
+        } else if (1 < itm.count) {
+          var tmp = (rsltMap[kn] = []);
+          for (var i = 0, l = itm.count; i < l; ++i) {
+            tmp.push(itm(1 + i));
+          }
+        } else {
+          rsltMap[kn] = "";
+        }
+      }
+    }
+    return rsltMap;
+  };
+
 
   XXASP.readPostStream = function(objRequest) {
-    var objAdoStream = Server.createObject("ADODB.Stream");
-    //依赖ado基础库
-    //var adTypeBinary = 1,
-    //  adTypeText = 2;
-    var res = "", t;
-
     if (!objRequest || !(t = objRequest.totalBytes)) {
       return res;
     }
+
+    var objAdoStream = null, res = "", t;
+
+    //依赖ado基础库
+    if ("undefined" == typeof adTypeBinary) {
+      var adTypeBinary = 1;
+    }
+
+    //依赖ado基础库
+    if ("undefined" == typeof adTypeText) {
+      var adTypeText = 2;
+    }
+
+    objAdoStream = Server.createObject("ADODB.Stream");
 
     //使用ADO stream工具对象读取multipart form data的流，转换为标准字符串
     objAdoStream.type = adTypeBinary; //字节流模式

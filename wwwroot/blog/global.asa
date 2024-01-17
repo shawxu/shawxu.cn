@@ -8,7 +8,7 @@ function Session_OnStart() {
   Session.contents("uname") = "Xx";
 
   var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb";
-  Session.contents("dbConnString") = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;";
+  Session.contents("dbConnString") = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;Jet OLEDB:Database Password=$Xx;";
 }
 
 function Session_OnEnd() {
