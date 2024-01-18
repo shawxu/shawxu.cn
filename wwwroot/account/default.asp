@@ -29,7 +29,7 @@
       max-height:50px;
       overflow:hidden;
     }
-    .words {
+  /*  .words {
       font-size:0.6rem;
       white-space:pre-wrap;
       word-break:break-word;
@@ -39,7 +39,7 @@
     }
     .blogcontent {
       width:480px;
-    }
+    } */
   </style>
 </head>
 <body>

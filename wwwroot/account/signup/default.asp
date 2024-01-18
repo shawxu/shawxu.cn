@@ -24,21 +24,22 @@
   connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
   connAccessDb.open();
 
-  var dateTime = new Date();
   var objAdoCmd = Server.createObject("ADODB.Command");
-
-  var uuidBase = XXASP.UUID.v3(formData.email, XXASP.UUID.v3.DNS);
-  var showID = XXASP.UUID.v5(formData.pwd, uuidBase);
 
   objAdoCmd.commandText = "INSERT INTO Account (ShowID, Email, PasswordHash, SignUpTime) VALUES (:showid, :email, :pwdhash, :signuptime)";
 
+  /* =============================== */
+  var uuidBase = XXASP.UUID.v3(formData.email, XXASP.UUID.v3.DNS);
+  var showID = XXASP.UUID.v5(formData.pwd, uuidBase);
+  /* =============================== */
   objAdoCmd.parameters.append(objAdoCmd.createParameter("showid", adVarChar, adParamInput,
-    38, showID));
+    showID.length, showID));
 
   objAdoCmd.parameters.append(objAdoCmd.createParameter("email", adVarChar, adParamInput,
     formData.email.length, formData.email));
 
   /* =============================== */
+  var dateTime = new Date();
   var signupTime = XXASP.UTILS.toDBDateTimeString(dateTime);
   var pwdHash = XXASP.hashStringify(XXASP.sha1(formData.pwd + showID + signupTime)); //!!!!
   /* =============================== */
@@ -46,19 +47,34 @@
     pwdHash.length, pwdHash));
 
   objAdoCmd.parameters.append(objAdoCmd.createParameter("signuptime", adDBTimeStamp, adParamInput,
-    20, signupTime));
+    signupTime.length, signupTime));
 
   objAdoCmd.activeConnection = connAccessDb;
   objAdoCmd.commandType = adCmdText;
   objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
-  objAdoCmd.execute();
+
+  var rsltObj = {
+    "code" : 0,
+    "msg" : "ok",
+    "data" : null,
+    "error" : null
+  };
+
+  try {
+    objAdoCmd.execute();
+  } catch (err) {
+    XXASP.handleError(err, rsltObj);
+    rsltObj.error = XXASP.readADOErrors(connAccessDb);
+  }
+
+  rsltObj.data = formData; //DEBUG
 
   objAdoCmd = null;
   connAccessDb.close();
   connAccessDb = null;
 %>
   <script>
-    window.parent.postMessage(<%= JSON.stringify(formData) %>, "*");
+    window.parent.postMessage(<%= JSON.stringify(rsltObj) %>, "*");
   </script>
 </body>
 </html>
