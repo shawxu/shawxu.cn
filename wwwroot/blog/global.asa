@@ -5,16 +5,20 @@ function Application_OnStart() {
 }
 
 function Session_OnStart() {
-  Session.Contents("uname") = "Xx";
+  Session.contents("uname") = "Xx";
+
+  var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb";
+  Session.contents("dbConnString") = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;Jet OLEDB:Database Password=$Xx;";
 }
 
 function Session_OnEnd() {
-  Session.Contents.Remove("uname");
+  Session.contents.remove("uname");
+
+  Session.contents.remove("dbConnString");
 }
 
 
 function Application_OnEnd() {
 
 }
-
 </script>

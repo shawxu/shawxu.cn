@@ -20,20 +20,30 @@
 		<article>
       <h6>
         <%
-          var dateValueAppStart = Number(Application.Contents("XXASP_APP_START"));
+          var dateValueAppStart = Number(Application.contents("XXASP_APP_START"));
           var dateAppStart = new Date(dateValueAppStart);
+          var uuidV1 = XXASP.UUID.v1();
+          var uuidV4 = XXASP.UUID.v4();
         %>
         Application started at: <%= dateValueAppStart %> => <%= dateAppStart.toString() %><br>
-        Now: <%= XXASP.UTILS.toDBDateTimeString(_t0) %><br>
+        Now: <%= XXASP.UTILS.toDBDateTimeString(_t0) %><br><br>
         Session.LCID: <%= Session.LCID %><br>
         Session.codePage: <%= Session.codePage %><br>
-        Session.sessionID: <%= Session.sessionID %><br>
-        md5: <%= XXASP.md5("Hello world!") %><br>
-        sha1: <%= XXASP.sha1("Hello world!") %><br>
-        uuid v1: <%= XXASP.UUID.v1() %><br>
-        uuid v3: <%= XXASP.UUID.v3("xxblog", "710b962e-041c-11e1-9234-0123456789ab") %><br>
-        uuid v4: <%= XXASP.UUID.v4() %><br>
-        uuid v5: <%= XXASP.UUID.v5("xxblog", "710b962e-041c-11e1-9234-0123456789ab") %><br>
+        Session.sessionID: <%= Session.sessionID %><br><br>
+        "Hello world!" md5 array: <%= XXASP.md5("Hello world!") %><br>
+        "Hello world!" md5 string: <%= XXASP.hashStringify(XXASP.md5("Hello world!")) %><br><br>
+        "Hello world!" sha1 array: <%= XXASP.sha1("Hello world!") %><br>
+        "Hello world!" sha1 string: <%= XXASP.hashStringify(XXASP.sha1("Hello world!")) %><br><br>
+        uuid v1: <%= uuidV1 %><br><br>
+        uuid v3: <%= XXASP.UUID.v3("shawxu.cn", uuidV1) %><br>
+        uuid v3 name: <%= XXASP.UUID.v3.name %><br>
+        uuid v3 DNS: <%= XXASP.UUID.v3.DNS %><br>
+        uuid v3 URL: <%= XXASP.UUID.v3.URL %><br><br>
+        uuid v4: <%= uuidV4 %><br><br>
+        uuid v5: <%= XXASP.UUID.v5("https://shawxu.cn", uuidV4) %><br>
+        uuid v5 name: <%= XXASP.UUID.v5.name %><br>
+        uuid v5 DNS: <%= XXASP.UUID.v5.DNS %><br>
+        uuid v5 URL: <%= XXASP.UUID.v5.URL %><br>
       </h6>
 			<%
         for(var itr = new Enumerator(Session.contents), itm = null, tmp = []; !itr.atEnd(), itm = itr.item(); itr.moveNext()) {

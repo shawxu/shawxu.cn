@@ -1,8 +1,8 @@
 <%@ language="jscript" codepage="65001"%>
 <%
+  var _t0 = new Date();
   Response.contentType = "application/json";
   Response.charSet = "utf-8";
-  var _t0 = new Date();
 %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
@@ -23,27 +23,39 @@
 
   objFormData = XXASP.parseMultipartData(formPostData, strBoundary);
 
-  var connAccessDb = Server.createObject("ADODB.Connection");
-  var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb"; //GOOD 64bit driver
-  connAccessDb.connectionString = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;"; //GOOD 64bit OLEDB
-  connAccessDb.open();
+  if (!objFormData.title || !objFormData.content) {
+    //没从POST负载解析出指定的数据
+  } else {
+    var connAccessDb = Server.createObject("ADODB.Connection");
+    connAccessDb.connectionString = Session.contents("dbConnString");
+    connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
+    connAccessDb.open();
 
-  var dateTime = new Date();
-  var objAdoCmd = Server.createObject("ADODB.Command");
-  objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, " +
-    "PubTime, UpdateTime, OwnerID) VALUES ('" + XXASP.UUID.v4() +
-    "', '" + objFormData.title + "', '" + objFormData.content + 
-    "', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + 
-    "', '" + XXASP.UTILS.toDBDateTimeString(dateTime) + "', 1)";
+    var dateTime = new Date();
+    var objAdoCmd = Server.createObject("ADODB.Command");
 
-  objAdoCmd.activeConnection = connAccessDb;
-  objAdoCmd.commandType = adCmdText;
-  objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
-  objAdoCmd.execute();
+    objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, PubTime, UpdateTime, OwnerID) VALUES (:uuidv4, :title, :content, :pubtime, :updtime, 1)";
 
-  connAccessDb.close();
-  delete objAdoCmd;
-  delete connAccessDb;
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("uuidv4", adVarChar, adParamInput,
+      38, XXASP.UUID.v4()));
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("title", adLongVarWChar, adParamInput,
+      objFormData.title.length, objFormData.title));
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("content", adLongVarWChar, adParamInput,
+      objFormData.content.length, objFormData.content));
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("pubtime", adDBTimeStamp, adParamInput,
+      20, XXASP.UTILS.toDBDateTimeString(dateTime)));
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("updtime", adDBTimeStamp, adParamInput,
+      20, XXASP.UTILS.toDBDateTimeString(dateTime)));
+
+    objAdoCmd.activeConnection = connAccessDb;
+    objAdoCmd.commandType = adCmdText;
+    objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
+    objAdoCmd.execute();
+
+    objAdoCmd = null;
+    connAccessDb.close();
+    connAccessDb = null;
+  }
 
 %>
 {
@@ -51,7 +63,6 @@
   "msg" : "<%= contentLengthHeader %>, ok",
   "bodyLength" : "<%= totalByteLength %>",
   "duration" : "<%= (new Date() - _t0) %>",
-  "dbPath" : "<%= JSON.escString(dbFilePath) %>",
   "boundary" : "<%= JSON.escString(strBoundary) %>",
   "reqBodyDecoded" : "<%= JSON.escString(XXASP.dataMapQueryStringify(objFormData)) %>",
   "reqBodyJSON" : 

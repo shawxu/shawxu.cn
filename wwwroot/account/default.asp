@@ -14,7 +14,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href="https://s3.shawxu.net/images/favicons/xx-v1/favicon.ico">
   <link rel="stylesheet" href="https://s3.shawxu.net/css/bootstrap.min.css">
-	<title>shawxu.cn /blog</title>
+	<title>shawxu.cn /account</title>
   <style>
     table {
       width:1200px;
@@ -56,22 +56,22 @@
         connAccessDb.open();
 
         var rSet = Server.createObject("ADODB.Recordset");
-        rSet.open("SELECT * FROM Blog", connAccessDb, adOpenForwardOnly);
+        rSet.open("SELECT * FROM Account", connAccessDb, adOpenForwardOnly);
         var restArrStr = [];
         var rCnt = 0;
 
-        restArrStr.push("<table><caption>Table Blog</caption>");
+        restArrStr.push("<table><caption>Table Account</caption>");
         while (!rSet.EOF) {
           if (rCnt == 0) { //展现表头
             restArrStr.push("<thead><tr>");
             for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
               switch (rSet.fields(i).name) {
-                case "Content":
+                /*case "Content":
                   restArrStr.push("<th class=\"blogcontent\">");
                   break;
                 case "Title":
                   restArrStr.push("<th class=\"blogtitle\">");
-                  break;
+                  break;*/
                 default:
                   restArrStr.push("<th>");
               }
@@ -82,12 +82,12 @@
           restArrStr.push("<tr>");
           for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
             switch (rSet.fields(i).name) {
-              case "Content":
+              /*case "Content":
                 restArrStr.push("<td class=\"blogcontent words\">");
                 break;
               case "Title":
                 restArrStr.push("<td class=\"blogtitle words\">");
-                break;
+                break;*/
               default:
                 restArrStr.push("<td>");
             }
