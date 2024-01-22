@@ -210,24 +210,26 @@
   }
 
   XXASP.UTILS.toDBDateTimeString = function (objDT, withMsec) {
-    if ("undefined" == typeof objDT || "function" != typeof objDT.getUTCFullYear) {
+    if ("undefined" == typeof objDT || "function" != typeof objDT.getFullYear) {
       objDT = new Date();
     }
 
-    var arrDT = [];
-    arrDT.push(objDT.getUTCFullYear(), "-",
-      objDT.getUTCMonth() + 1, "-",
-      objDT.getUTCDate(), " ",
-      objDT.getUTCHours(), ":",
-      objDT.getUTCMinutes(), ":",
-      objDT.getUTCSeconds());
+    var arrDT = [], tmp;
+    arrDT.push(
+      objDT.getFullYear(), "-",
+      (tmp = objDT.getMonth() + 1) < 10 ? "0" + tmp : tmp, "-",
+      (tmp = objDT.getDate()) < 10 ? "0" + tmp : tmp, " ",
+      (tmp = objDT.getHours()) < 10 ? "0" + tmp : tmp, ":",
+      (tmp = objDT.getMinutes()) < 10 ? "0" + tmp : tmp, ":",
+      (tmp = objDT.getSeconds()) < 10 ? "0" + tmp : tmp
+    );
     
     if (!!withMsec) {
-      arrDT.push(".", objDT.getUTCMilliseconds());
+      arrDT.push(".", objDT.getMilliseconds());
     }
-    
+
     return arrDT.join("");
-  }
+  };
 
 
 %>
