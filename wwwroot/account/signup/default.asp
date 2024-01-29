@@ -1,20 +1,14 @@
 <%@ language="jscript" codepage="65001"%>
 <%
   var _t0 = new Date();
+  Response.contentType = "application/json";
   Response.charSet = "utf-8";
 %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-  <meta charset="UTF-8">
-  <title>Sign up result</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
+
 <%
   var formData = XXASP.parseFormData(Request);
 
@@ -72,9 +66,6 @@
   objAdoCmd = null;
   connAccessDb.close();
   connAccessDb = null;
+
+  Response.write(JSON.stringify(rsltObj));
 %>
-  <script>
-    window.parent.postMessage(<%= JSON.stringify(rsltObj) %>, "*");
-  </script>
-</body>
-</html>
