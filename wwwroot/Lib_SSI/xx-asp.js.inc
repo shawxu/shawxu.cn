@@ -20,7 +20,7 @@
   //获取multipart form data分割特征串的工具方法
   //若参数为空，默认从http request header去取并处理
   //以"boundary="为匹配特征
-  XXASP.getBoundaryStr = function(objRequest) {
+  XXASP.getBoundaryStr = function (objRequest) {
     var srcStr, t;
 
     if (!objRequest || !objRequest.serverVariables || !(t = objRequest.serverVariables("CONTENT_TYPE"))) {
@@ -41,7 +41,7 @@
 
 
   //解析multipart form data本体，到map结构
-  XXASP.parseMultipartData = function(srcData, strBdr) {
+  XXASP.parseMultipartData = function (srcData, strBdr) {
     var resMap = {};
     if("string" != typeof srcData || "string" != typeof strBdr || srcData.length < 1 || strBdr.length < 1){
       return resMap;
@@ -64,7 +64,7 @@
     return resMap;
   };
 
-  XXASP.parseFormData = function(objRequest) {
+  XXASP.parseFormData = function (objRequest) {
     var rsltMap = {};
 
     for (var itr = new Enumerator(objRequest.form), itm = null, kn = "", vlu = ""; !itr.atEnd(), kn = itr.item(); itr.moveNext()) {
@@ -87,7 +87,7 @@
   };
 
 
-  XXASP.readPostStream = function(objRequest) {
+  XXASP.readPostStream = function (objRequest) {
     if (!objRequest || !(t = objRequest.totalBytes)) {
       return res;
     }
@@ -120,7 +120,7 @@
   };
 
 
-  XXASP.dataMapQueryStringify = function(dataMap) {
+  XXASP.dataMapQueryStringify = function (dataMap) {
     dataMap = "object" == typeof dataMap ? dataMap : {};
     var rest = [], t;
     for(var k in dataMap) {
@@ -130,30 +130,106 @@
     }
     return rest.join("&");
   };
+  
+  /*
+    //ADO Errors
+		Description	"The changes ..."	String
+		HelpContext	5003022	Number
+		HelpFile	""	String
+		NativeError	-105121349	Number
+		Number	-2147467259	Number
+		Source	"Microsoft Access Database Engine"	String
+		SQLState	"3022"	String
+  */
+  XXASP.readADOErrors = function (connObj) {
+    var rslt = null;
+    if ("object" == typeof connObj && "undefined" != typeof connObj.errors) {
+      if (connObj.errors.count > 0) {
+        var adoErrors = [], tmp;
+        for (var i = 0, itm; i < connObj.errors.count; ++i) {
+          itm = connObj.errors(i);
+          if ("object" == typeof itm) {
+            tmp = {};
+            if ("number" == typeof itm.Number) {
+              tmp.number = itm.Number;
+            }
+            if ("string" == typeof itm.Description) {
+              tmp.description = itm.Description;
+            }
+            if ("number" == typeof itm.HelpContext) {
+              tmp.helpContext = itm.HelpContext;
+            }
+            if ("string" == typeof itm.HelpFile) {
+              tmp.helpFile = itm.HelpFile;
+            }
+            if ("number" == typeof itm.NativeError) {
+              tmp.nativeError = itm.NativeError;
+            }
+            if ("string" == typeof itm.Source) {
+              tmp.source = itm.Source;
+            }
+            if ("string" == typeof itm.SQLState) {
+              tmp.sqlState = itm.SQLState;
+            }
+          }
+          adoErrors.push(tmp);
+        }
+        rslt = adoErrors;
+      }
+    }
+
+    return rslt;
+  };
+
+  /*
+  //javascript Error
+  description	"The changes you requested to the table were not successful because they would create duplicate values in the index, primary key, or relationship. Change the data in the field or fields that contain duplicate data, remove the index, or redefine the index to permit duplicate entries and try again."	String
+  message	"The changes you requested to the table were not successful because they would create duplicate values in the index, primary key, or relationship. Change the data in the field or fields that contain duplicate data, remove the index, or redefine the index to permit duplicate entries and try again."	String
+  name	"Error"	String
+  number	-2147467259	Number
+  */
+  XXASP.handleError = function (errObj, retObj) {
+    if ("object" != typeof retObj) {
+      retObj = {};
+    }
+    if ("object" == typeof errObj) {
+      if ("number" == typeof errObj.number && errObj.number !== 0) {
+        retObj.code = errObj.number;
+      }
+
+      if ("string" == typeof errObj.message && errObj.message.length > 0) {
+        retObj.msg = errObj.message;
+      } else if ("string" == typeof errObj.description && errObj.description.length > 0) {
+        retObj.msg = errObj.description;
+      }
+    }
+  };
 
   if (typeof XXASP.UTILS != "object") {
     XXASP.UTILS = {};
   }
 
-  XXASP.UTILS.toDBDateTimeString = function(objDT, withMsec) {
-    if ("undefined" == typeof objDT || "function" != typeof objDT.getUTCFullYear) {
+  XXASP.UTILS.toDBDateTimeString = function (objDT, withMsec) {
+    if ("undefined" == typeof objDT || "function" != typeof objDT.getFullYear) {
       objDT = new Date();
     }
 
-    var arrDT = [];
-    arrDT.push(objDT.getUTCFullYear(), "-",
-      objDT.getUTCMonth() + 1, "-",
-      objDT.getUTCDate(), " ",
-      objDT.getUTCHours(), ":",
-      objDT.getUTCMinutes(), ":",
-      objDT.getUTCSeconds());
+    var arrDT = [], tmp;
+    arrDT.push(
+      objDT.getFullYear(), "-",
+      (tmp = objDT.getMonth() + 1) < 10 ? "0" + tmp : tmp, "-",
+      (tmp = objDT.getDate()) < 10 ? "0" + tmp : tmp, " ",
+      (tmp = objDT.getHours()) < 10 ? "0" + tmp : tmp, ":",
+      (tmp = objDT.getMinutes()) < 10 ? "0" + tmp : tmp, ":",
+      (tmp = objDT.getSeconds()) < 10 ? "0" + tmp : tmp
+    );
     
     if (!!withMsec) {
-      arrDT.push(".", objDT.getUTCMilliseconds());
+      arrDT.push(".", objDT.getMilliseconds());
     }
-    
+
     return arrDT.join("");
-  }
+  };
 
 
 %>

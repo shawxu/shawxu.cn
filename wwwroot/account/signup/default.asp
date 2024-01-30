@@ -1,20 +1,14 @@
 <%@ language="jscript" codepage="65001"%>
 <%
   var _t0 = new Date();
+  Response.contentType = "application/json";
   Response.charSet = "utf-8";
 %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-  <meta charset="UTF-8">
-  <title>Sign up result</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
+
 <%
   var formData = XXASP.parseFormData(Request);
 
@@ -24,21 +18,22 @@
   connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
   connAccessDb.open();
 
-  var dateTime = new Date();
   var objAdoCmd = Server.createObject("ADODB.Command");
-
-  var uuidBase = XXASP.UUID.v3(formData.email, XXASP.UUID.v3.DNS);
-  var showID = XXASP.UUID.v5(formData.pwd, uuidBase);
 
   objAdoCmd.commandText = "INSERT INTO Account (ShowID, Email, PasswordHash, SignUpTime) VALUES (:showid, :email, :pwdhash, :signuptime)";
 
+  /* =============================== */
+  var uuidBase = XXASP.UUID.v3(formData.email, XXASP.UUID.v3.DNS);
+  var showID = XXASP.UUID.v5(formData.pwd, uuidBase);
+  /* =============================== */
   objAdoCmd.parameters.append(objAdoCmd.createParameter("showid", adVarChar, adParamInput,
-    38, showID));
+    showID.length, showID));
 
   objAdoCmd.parameters.append(objAdoCmd.createParameter("email", adVarChar, adParamInput,
     formData.email.length, formData.email));
 
   /* =============================== */
+  var dateTime = new Date();
   var signupTime = XXASP.UTILS.toDBDateTimeString(dateTime);
   var pwdHash = XXASP.hashStringify(XXASP.sha1(formData.pwd + showID + signupTime)); //!!!!
   /* =============================== */
@@ -46,19 +41,31 @@
     pwdHash.length, pwdHash));
 
   objAdoCmd.parameters.append(objAdoCmd.createParameter("signuptime", adDBTimeStamp, adParamInput,
-    20, signupTime));
+    signupTime.length, signupTime));
 
   objAdoCmd.activeConnection = connAccessDb;
   objAdoCmd.commandType = adCmdText;
   objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
-  objAdoCmd.execute();
+
+  var rsltObj = {
+    "code" : 0,
+    "msg" : "ok",
+    "data" : null,
+    "error" : null
+  };
+
+  try {
+    objAdoCmd.execute();
+  } catch (err) {
+    XXASP.handleError(err, rsltObj);
+    rsltObj.error = XXASP.readADOErrors(connAccessDb);
+  }
+
+  rsltObj.data = formData; //DEBUG
 
   objAdoCmd = null;
   connAccessDb.close();
   connAccessDb = null;
+
+  Response.write(JSON.stringify(rsltObj));
 %>
-  <script>
-    window.parent.postMessage(<%= JSON.stringify(formData) %>, "*");
-  </script>
-</body>
-</html>

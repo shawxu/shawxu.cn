@@ -29,7 +29,7 @@
       max-height:50px;
       overflow:hidden;
     }
-    .words {
+  /*  .words {
       font-size:0.6rem;
       white-space:pre-wrap;
       word-break:break-word;
@@ -39,7 +39,7 @@
     }
     .blogcontent {
       width:480px;
-    }
+    } */
   </style>
 </head>
 <body>
@@ -91,8 +91,11 @@
               default:
                 restArrStr.push("<td>");
             }
-
-            restArrStr.push(rSet.fields(i).value, "</td>");
+            if (rSet.fields(i).name === "SignUpTime") {
+              restArrStr.push(XXASP.UTILS.toDBDateTimeString(new Date(rSet.fields(i).value)), " ## ");
+            }// else {
+              restArrStr.push(rSet.fields(i).value, "</td>");
+            //}
           }
           restArrStr.push("</tr>");
 
@@ -108,6 +111,10 @@
         connAccessDb = null;
       %>
       <%= restArrStr.join("") %>
+      Time: <%= "function" == typeof _t0.toUTCString ? _t0.toUTCString() : (_t0 + " #") %><br>
+      Time: <%= "function" == typeof _t0.toGMTString ? _t0.toGMTString() : (_t0 + " #") %><br>
+      Time: <%= "function" == typeof _t0.toISOString ? _t0.toISOString() : (_t0 + " #") %><br>
+      Time: <%= "function" == typeof _t0.toLocaleString ? _t0.toLocaleString() : (_t0 + " #") %><br>
       Duration: <%= new Date() - _t0 %>
     </article>
 	</main>
