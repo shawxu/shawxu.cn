@@ -10,10 +10,11 @@
 <!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <%
   var totalByteLength = Request.totalBytes;
-  var contentLengthHeader = Request.serverVariables("CONTENT_LENGTH");
+  var contentLengthHeader = Request.serverVariables("CONTENT_LENGTH") - 0;
   var formPostData = "";
   var strBoundary = "";
   var objFormData;
+  var rsltObj = null;
 
   //获取multipart form data的分隔符特征串
   strBoundary = XXASP.getBoundaryStr(Request);
@@ -25,6 +26,14 @@
 
   if (!objFormData.title || !objFormData.content) {
     //没从POST负载解析出指定的数据
+    rsltObj = {
+      "code" : -999,
+      "msg" : "no upload data",
+      "data" : {},
+      "error" : "no upload data"
+    };
+
+
   } else {
     var connAccessDb = Server.createObject("ADODB.Connection");
     connAccessDb.connectionString = Session.contents("dbConnString");
@@ -33,38 +42,52 @@
 
     var dateTime = new Date();
     var objAdoCmd = Server.createObject("ADODB.Command");
+    var showID = XXASP.UUID.v4();
+    var timeStr = XXASP.UTILS.toDBDateTimeString(dateTime);
 
     objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, PubTime, UpdateTime, OwnerID) VALUES (:uuidv4, :title, :content, :pubtime, :updtime, 1)";
 
     objAdoCmd.parameters.append(objAdoCmd.createParameter("uuidv4", adVarChar, adParamInput,
-      38, XXASP.UUID.v4()));
+      showID.length, showID));
     objAdoCmd.parameters.append(objAdoCmd.createParameter("title", adLongVarWChar, adParamInput,
       objFormData.title.length, objFormData.title));
     objAdoCmd.parameters.append(objAdoCmd.createParameter("content", adLongVarWChar, adParamInput,
       objFormData.content.length, objFormData.content));
     objAdoCmd.parameters.append(objAdoCmd.createParameter("pubtime", adDBTimeStamp, adParamInput,
-      20, XXASP.UTILS.toDBDateTimeString(dateTime)));
+      timeStr.length, timeStr));
     objAdoCmd.parameters.append(objAdoCmd.createParameter("updtime", adDBTimeStamp, adParamInput,
-      20, XXASP.UTILS.toDBDateTimeString(dateTime)));
+      timeStr.length, timeStr));
 
     objAdoCmd.activeConnection = connAccessDb;
     objAdoCmd.commandType = adCmdText;
     objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
-    objAdoCmd.execute();
+
+    rsltObj = {
+      "code" : 0,
+      "msg" : "ok",
+      "data" : null,
+      "error" : null
+    };
+
+    try {
+      objAdoCmd.execute();
+    } catch (err) {
+      XXASP.handleError(err, rsltObj);
+      rsltObj.error = XXASP.readADOErrors(connAccessDb);
+    }
 
     objAdoCmd = null;
     connAccessDb.close();
     connAccessDb = null;
   }
 
+
+  rsltObj.bodyLength = totalByteLength;
+  rsltObj.lengthHeader = contentLengthHeader;
+  rsltObj.duration = (new Date() - _t0);
+  rsltObj.boundary = JSON.escString(strBoundary);
+  rsltObj.reqBodyDecoded = JSON.escString(XXASP.dataMapQueryStringify(objFormData));
+  rsltObj.reqBodyJSON = objFormData;
+
+  Response.write(JSON.stringify(rsltObj));
 %>
-{
-  "code" : 0,
-  "msg" : "<%= contentLengthHeader %>, ok",
-  "bodyLength" : "<%= totalByteLength %>",
-  "duration" : "<%= (new Date() - _t0) %>",
-  "boundary" : "<%= JSON.escString(strBoundary) %>",
-  "reqBodyDecoded" : "<%= JSON.escString(XXASP.dataMapQueryStringify(objFormData)) %>",
-  "reqBodyJSON" : 
-<%= JSON.stringify(objFormData) %>
-}

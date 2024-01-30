@@ -62,6 +62,8 @@
   }
 
   rsltObj.data = formData; //DEBUG
+  delete rsltObj.data["pwd"];
+  rsltObj.data.showid = showID;
 
   objAdoCmd = null;
   connAccessDb.close();
