@@ -40,8 +40,8 @@
         Session.LCID: <%= Session.LCID %><br>
         Session.codePage: <%= Session.codePage %><br>
         Session.sessionID: <%= Session.sessionID %><br><br>
-        "你好世界！" md5 array: <%= XXASP.md5("123") %><br>
-        "你好世界！" md5 string: <%= XXASP.hashStringify(XXASP.md5("123")) %><br><br>
+        "你好世界！" md5 array: <%= XXASP.md5("你好世界！") %><br>
+        "你好世界！" md5 string: <%= XXASP.hashStringify(XXASP.md5("你好世界！")) %><br><br>
         "Hello world!" sha1 array: <%= XXASP.sha1("Hello world!") %><br>
         "Hello world!" sha1 string: <%= XXASP.hashStringify(XXASP.sha1("Hello world!")) %><br><br>
         uuid v1: <%= uuidV1 %><br><br>
