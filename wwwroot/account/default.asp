@@ -16,6 +16,14 @@
   <link rel="stylesheet" href="https://s3.shawxu.net/css/bootstrap.min.css">
 	<title>shawxu.cn /account</title>
   <style>
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("https://shawxu.net/assets/style/font/JetBrainsMono-Regular.woff2");
+    }
+
+    body {
+      font-family: "JetBrains Mono";
+    }
     table {
       width:1200px;
     }

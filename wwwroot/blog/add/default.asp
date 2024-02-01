@@ -65,7 +65,7 @@
     rsltObj = {
       "code" : 0,
       "msg" : "ok",
-      "data" : null,
+      "data" : {},
       "error" : null
     };
 
@@ -76,18 +76,44 @@
       rsltObj.error = XXASP.readADOErrors(connAccessDb);
     }
 
+    if ("function" == typeof connAccessDb.errors.clear && connAccessDb.errors.count > 0) {
+      connAccessDb.errors.clear();
+    }
+
+    var identityRs = null;
+
+    objAdoCmd.commandText = "SELECT @@IDENTITY";
+
+    try {
+      identityRs = objAdoCmd.execute();
+    } catch (err) {
+      XXASP.handleError(err, rsltObj);
+      var tmp = XXASP.readADOErrors(connAccessDb);
+      if (!rsltObj.error) {
+        rsltObj.error = tmp;
+      } else if ("object" == typeof tmp && tmp.length) {
+        rsltObj.error = tmp.concat(rsltObj.error);
+      }
+    }
+
+    if ("object" == typeof identityRs) {
+      rsltObj.data.blogID = identityRs.fields(0).value - 0;
+      rsltObj.data.blogShowID = showID;
+    }
+
+    identityRs = null;
     objAdoCmd = null;
     connAccessDb.close();
     connAccessDb = null;
   }
 
 
-  rsltObj.bodyLength = totalByteLength;
-  rsltObj.lengthHeader = contentLengthHeader;
-  rsltObj.duration = (new Date() - _t0);
-  rsltObj.boundary = JSON.escString(strBoundary);
-  rsltObj.reqBodyDecoded = JSON.escString(XXASP.dataMapQueryStringify(objFormData));
-  rsltObj.reqBodyJSON = objFormData;
+  rsltObj.data.bodyLength = totalByteLength;
+  rsltObj.data.lengthHeader = contentLengthHeader;
+  rsltObj.data.duration = (new Date() - _t0);
+  rsltObj.data.boundary = JSON.escString(strBoundary);
+  rsltObj.data.reqBodyDecoded = JSON.escString(XXASP.dataMapQueryStringify(objFormData));
+  rsltObj.data.reqBodyJSON = objFormData;
 
   Response.write(JSON.stringify(rsltObj));
 %>
