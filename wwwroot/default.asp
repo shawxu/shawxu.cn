@@ -13,6 +13,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href="https://s3.shawxu.net/images/favicons/xx-v1/favicon.ico">
   <link rel="stylesheet" href="https://s3.shawxu.net/css/bootstrap.min.css">
+  <style>
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("https://shawxu.net/assets/style/font/JetBrainsMono-Regular.woff2");
+    }
+
+    body {
+      font-family: "JetBrains Mono";
+    }
+  </style>
 	<title>shawxu.cn /.</title>
 </head>
 <body>
@@ -30,8 +40,8 @@
         Session.LCID: <%= Session.LCID %><br>
         Session.codePage: <%= Session.codePage %><br>
         Session.sessionID: <%= Session.sessionID %><br><br>
-        "Hello world!" md5 array: <%= XXASP.md5("Hello world!") %><br>
-        "Hello world!" md5 string: <%= XXASP.hashStringify(XXASP.md5("Hello world!")) %><br><br>
+        "你好世界！" md5 array: <%= XXASP.md5("你好世界！") %><br>
+        "你好世界！" md5 string: <%= XXASP.hashStringify(XXASP.md5("你好世界！")) %><br><br>
         "Hello world!" sha1 array: <%= XXASP.sha1("Hello world!") %><br>
         "Hello world!" sha1 string: <%= XXASP.hashStringify(XXASP.sha1("Hello world!")) %><br><br>
         uuid v1: <%= uuidV1 %><br><br>

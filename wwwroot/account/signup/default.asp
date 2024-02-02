@@ -12,7 +12,6 @@
 <%
   var formData = XXASP.parseFormData(Request);
 
-
   var connAccessDb = Server.createObject("ADODB.Connection");
   connAccessDb.connectionString = Session.contents("dbConnString");
   connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
@@ -50,7 +49,7 @@
   var rsltObj = {
     "code" : 0,
     "msg" : "ok",
-    "data" : null,
+    "data" : {},
     "error" : null
   };
 
@@ -61,8 +60,32 @@
     rsltObj.error = XXASP.readADOErrors(connAccessDb);
   }
 
-  rsltObj.data = formData; //DEBUG
+  if ("function" == typeof connAccessDb.errors.clear && connAccessDb.errors.count > 0) {
+    connAccessDb.errors.clear();
+  }
 
+  var identityRs = null;
+
+  objAdoCmd.commandText = "SELECT @@IDENTITY";
+
+  try {
+    identityRs = objAdoCmd.execute();
+  } catch (err) {
+    XXASP.handleError(err, rsltObj);
+    var tmp = XXASP.readADOErrors(connAccessDb);
+    if (!rsltObj.error) {
+      rsltObj.error = tmp;
+    } else if ("object" == typeof tmp && tmp.length) {
+      rsltObj.error = tmp.concat(rsltObj.error);
+    }
+  }
+
+  if ("object" == typeof identityRs) {
+    rsltObj.data.userID = identityRs.fields(0).value - 0;
+    rsltObj.data.userShowID = showID;
+  }
+
+  identityRs = null;
   objAdoCmd = null;
   connAccessDb.close();
   connAccessDb = null;
