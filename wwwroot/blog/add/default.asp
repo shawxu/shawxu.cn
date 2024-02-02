@@ -1,4 +1,4 @@
-<%@ language="jscript" codepage="65001"%>
+<%@ language="jscript" codepage="65001" %>
 <%
   var _t0 = new Date();
   Response.contentType = "application/json";

@@ -1,4 +1,4 @@
-<%@ language="jscript" codepage="65001"%>
+<%@ language="jscript" codepage="65001" %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->

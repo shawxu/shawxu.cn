@@ -8,6 +8,7 @@ function Application_OnStart() {
 function Session_OnStart() {
   var t0 = new Date();
   Session.contents("XXASP_SN_START") = t0.getTime();
+  Session.codePage = 65001;
 
   var dbFilePath = Server.mapPath("/") + "\\App_Data\\xxblog.accdb";
   Session.contents("dbConnString") = "Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" + dbFilePath + ";Persist Security Info=False;Jet OLEDB:Database Password=$Xx;";
