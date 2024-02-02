@@ -1,4 +1,4 @@
-<%@ language="jscript" %>
+<%@ language="jscript" codepage="65001" %>
 <% 
   var _t0 = new Date();
   Response.charset = "utf-8";
@@ -31,14 +31,18 @@
       <h6>
         <%
           var dateValueAppStart = Number(Application.contents("XXASP_APP_START"));
+          var dateValueSnStart = Number(Session.contents("XXASP_SN_START"));
           var dateAppStart = new Date(dateValueAppStart);
+          var dateSnStart = new Date(dateValueSnStart);
           var uuidV1 = XXASP.UUID.v1();
           var uuidV4 = XXASP.UUID.v4();
         %>
         Application started at: <%= dateValueAppStart %> => <%= dateAppStart.toString() %><br>
+        Session started at: <%= dateValueSnStart %> => <%= dateSnStart.toString() %><br>
         Now: <%= XXASP.UTILS.toDBDateTimeString(_t0) %><br><br>
         Session.LCID: <%= Session.LCID %><br>
         Session.codePage: <%= Session.codePage %><br>
+        Response.codePage: <%= Response.codePage %><br>
         Session.sessionID: <%= Session.sessionID %><br><br>
         "你好世界！" md5 array: <%= XXASP.md5("你好世界！") %><br>
         "你好世界！" md5 string: <%= XXASP.hashStringify(XXASP.md5("你好世界！")) %><br><br>
