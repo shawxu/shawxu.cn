@@ -42,12 +42,16 @@
 
     var dateTime = new Date();
     var objAdoCmd = Server.createObject("ADODB.Command");
-    var showID = XXASP.UUID.v4();
+    var showID = XXASP.UUID.v1(
+      {
+        "msecs" : dateTime.getTime()
+      }
+    );
     var timeStr = XXASP.UTILS.toDBDateTimeString(dateTime);
 
-    objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, PubTime, UpdateTime, OwnerID) VALUES (:uuidv4, :title, :content, :pubtime, :updtime, 1)";
+    objAdoCmd.commandText = "INSERT INTO Blog (ShowID, Title, Content, PubTime, UpdateTime, OwnerID) VALUES (:showid, :title, :content, :pubtime, :updtime, 1)";
 
-    objAdoCmd.parameters.append(objAdoCmd.createParameter("uuidv4", adVarChar, adParamInput,
+    objAdoCmd.parameters.append(objAdoCmd.createParameter("showid", adVarChar, adParamInput,
       showID.length, showID));
     objAdoCmd.parameters.append(objAdoCmd.createParameter("title", adLongVarWChar, adParamInput,
       objFormData.title.length, objFormData.title));
