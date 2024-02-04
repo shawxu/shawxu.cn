@@ -14,41 +14,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href="https://s3.shawxu.net/images/favicons/xx-v1/favicon.ico">
   <link rel="stylesheet" href="https://s3.shawxu.net/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://shawxu.net/assets/style/main.css">
 	<title>shawxu.cn /blog</title>
-  <style>
-    @font-face {
-      font-family: "JetBrains Mono";
-      src: url("https://shawxu.net/assets/style/font/JetBrainsMono-Regular.woff2");
-    }
-
-    body {
-      font-family: "JetBrains Mono";
-    }
-    table {
-      width:1200px;
-    }
-    caption {
-      caption-side:top;
-    }
-    tbody, thead {
-      font-size:0.75rem;
-    }
-    td, th {
-      max-height:50px;
-      overflow:hidden;
-    }
-    .words {
-      font-size:0.6rem;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
-    .blogtitle {
-      width:160px;
-    }
-    .blogcontent {
-      width:480px;
-    }
-  </style>
 </head>
 <body>
 	<main id="container">
