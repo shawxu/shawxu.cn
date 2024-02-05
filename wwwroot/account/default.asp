@@ -52,9 +52,9 @@
               }
               restArrStr.push(rSet.fields(i).name, "</th>");
             }
-            restArrStr.push("</tr></thead><tbody>");
+            restArrStr.push("</tr></thead>");
           } //表头展现结束
-          restArrStr.push("<tr>");
+          restArrStr.push("<tbody><tr>");
           for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
             switch (rSet.fields(i).name) {
               /*case "Content":

@@ -8,7 +8,6 @@
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
-
 <%
   var formData = XXASP.parseFormData(Request);
 
@@ -19,28 +18,21 @@
 
   var objAdoCmd = Server.createObject("ADODB.Command");
 
-  objAdoCmd.commandText = "INSERT INTO Account (ShowID, Email, PasswordHash, SignUpTime) VALUES (:showid, :email, :pwdhash, :signuptime)";
+  objAdoCmd.commandText = "SELECT * FROM Account WHERE Email = :email";
 
   /* =============================== */
   var uuidBase = XXASP.UUID.v3(formData.email, XXASP.UUID.v3.DNS);
-  var showID = XXASP.UUID.v5(formData.pwd, uuidBase);
+  var showID; // = XXASP.UUID.v5(formData.pwd, uuidBase);
   /* =============================== */
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("showid", adVarChar, adParamInput,
-    showID.length, showID));
 
   objAdoCmd.parameters.append(objAdoCmd.createParameter("email", adVarChar, adParamInput,
     formData.email.length, formData.email));
 
   /* =============================== */
-  var dateTime = new Date();
-  var signupTime = XXASP.UTILS.toDBDateTimeString(dateTime);
-  var pwdHash = XXASP.hashStringify(XXASP.sha1(formData.pwd + showID + signupTime)); //!!!!
+  var signUpTimeObj;
+  var signupTime; // = XXASP.UTILS.toDBDateTimeString(dateTime);
+  var pwdHash; // = XXASP.hashStringify(XXASP.sha1(formData.pwd + showID + signupTime)); //!!!!
   /* =============================== */
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("pwdhash", adVarChar, adParamInput,
-    pwdHash.length, pwdHash));
-
-  objAdoCmd.parameters.append(objAdoCmd.createParameter("signuptime", adDBTimeStamp, adParamInput,
-    signupTime.length, signupTime));
 
   objAdoCmd.activeConnection = connAccessDb;
   objAdoCmd.commandType = adCmdText;
@@ -54,38 +46,43 @@
   };
 
   try {
-    objAdoCmd.execute();
+    var userCheckRs = objAdoCmd.execute();
   } catch (err) {
     XXASP.handleError(err, rsltObj);
     rsltObj.error = XXASP.readADOErrors(connAccessDb);
   }
 
-  if ("function" == typeof connAccessDb.errors.clear && connAccessDb.errors.count > 0) {
-    connAccessDb.errors.clear();
-  }
+  if ("object" == typeof userCheckRs) {
+    if (!userCheckRs.BOF && !userCheckRs.EOF) {
+      for (var i = 0, tmp, cl = userCheckRs.fields.count; i < cl; ++i) {
+        tmp = userCheckRs.fields(i);
+        if (tmp.name === "ShowID") {
+          showID = tmp.value + "";
+        } else if (tmp.name === "SignUpTime") {
+          signUpTimeObj = new Date(tmp.value);
+        } else if (tmp.name === "PasswordHash") {
+          pwdHash = tmp.value + "";
+        }
+      }
 
-  var identityRs = null;
-
-  objAdoCmd.commandText = "SELECT @@IDENTITY";
-
-  try {
-    identityRs = objAdoCmd.execute();
-  } catch (err) {
-    XXASP.handleError(err, rsltObj);
-    var tmp = XXASP.readADOErrors(connAccessDb);
-    if (!rsltObj.error) {
-      rsltObj.error = tmp;
-    } else if ("object" == typeof tmp && tmp.length) {
-      rsltObj.error = tmp.concat(rsltObj.error);
+      signupTime = XXASP.UTILS.toDBDateTimeString(signUpTimeObj);
+      if (pwdHash === XXASP.hashStringify(XXASP.sha1(formData.pwd + showID + signupTime))) {
+        //密码校验成功
+        rsltObj.data.showID = showID;
+        Response.cookies("login")("sid") = showID;
+        Response.cookies("login").secure = true;
+      } else {
+        rsltObj.code = -998;
+        rsltObj.msg = "wrong pw";
+      }
+      
+    } else { //没有有效的记录
+      rsltObj.code = -999;
+      rsltObj.msg = "no user";
     }
   }
 
-  if ("object" == typeof identityRs) {
-    rsltObj.data.userID = identityRs.fields(0).value - 0;
-    rsltObj.data.userShowID = showID;
-  }
-
-  identityRs = null;
+  userCheckRs = null;
   objAdoCmd = null;
   connAccessDb.close();
   connAccessDb = null;

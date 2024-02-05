@@ -114,10 +114,10 @@
 
   rsltObj.data.bodyLength = totalByteLength;
   rsltObj.data.lengthHeader = contentLengthHeader;
-  rsltObj.data.duration = (new Date() - _t0);
   rsltObj.data.boundary = JSON.escString(strBoundary);
   rsltObj.data.reqBodyDecoded = JSON.escString(XXASP.dataMapQueryStringify(objFormData));
   rsltObj.data.reqBodyJSON = objFormData;
+  rsltObj.data.duration = (new Date() - _t0);
 
   Response.write(JSON.stringify(rsltObj));
 %>
