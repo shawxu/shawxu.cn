@@ -21,7 +21,7 @@
   objAdoCmd.commandText = "SELECT * FROM Account WHERE Email = :email";
 
   /* =============================== */
-  var uuidBase = XXASP.UUID.v3(formData.email, XXASP.UUID.v3.DNS);
+  var userID; // = XXASP.UUID.v3(formData.email, XXASP.UUID.v3.DNS);
   var showID; // = XXASP.UUID.v5(formData.pwd, uuidBase);
   /* =============================== */
 
@@ -62,6 +62,8 @@
           signUpTimeObj = new Date(tmp.value);
         } else if (tmp.name === "PasswordHash") {
           pwdHash = tmp.value + "";
+        } else if (tmp.name === "UserID") {
+          userID = tmp.value - 0;
         }
       }
 
@@ -70,6 +72,7 @@
         //密码校验成功
         rsltObj.data.showID = showID;
         Response.cookies("login")("sid") = showID;
+        Response.cookies("login")("uid") = userID;
         Response.cookies("login").secure = true;
       } else {
         rsltObj.code = -998;
