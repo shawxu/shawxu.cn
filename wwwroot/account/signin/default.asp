@@ -71,9 +71,17 @@
       if (pwdHash === XXASP.hashStringify(XXASP.sha1(formData.pwd + showID + signupTime))) {
         //密码校验成功
         rsltObj.data.showID = showID;
-        Response.cookies("login")("sid") = showID;
-        Response.cookies("login")("uid") = userID;
+        //Response.cookies("login")("sid") = showID;
+        //Response.cookies("login")("uid") = userID;
+        Response.cookies("login") = rsltObj.data.loginToken = XXASP.hashStringify(XXASP.md5(userID.toString() + showID + formData.email));
         Response.cookies("login").secure = true;
+        Session.contents(rsltObj.data.loginToken) = JSON.stringify(
+          {
+            "uid" : userID,
+            "sid" : showID,
+            "email" : formData.email
+          }
+        );
       } else {
         rsltObj.code = -998;
         rsltObj.msg = "wrong pw";
