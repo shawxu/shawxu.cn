@@ -90,5 +90,7 @@
   connAccessDb.close();
   connAccessDb = null;
 
+  rsltObj.data.duration = new Date() - _t0;
+
   Response.write(JSON.stringify(rsltObj));
 %>
