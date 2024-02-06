@@ -1,8 +1,8 @@
 <%@ language="jscript" codepage="65001" %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
-<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <%
   var _t0 = new Date();
   Response.charSet = "utf-8";

@@ -4,7 +4,6 @@
   Response.charset = "utf-8";
 %>
 <!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
-<!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
 <!DOCTYPE html>
 <html lang="zh-cn">

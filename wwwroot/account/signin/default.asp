@@ -5,9 +5,10 @@
   Response.charSet = "utf-8";
 %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
-<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/xx-xdream.js.inc" -->
 <%
   var formData = XXASP.parseFormData(Request);
 
@@ -36,14 +37,9 @@
 
   objAdoCmd.activeConnection = connAccessDb;
   objAdoCmd.commandType = adCmdText;
-  objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
+  objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_FIND;
 
-  var rsltObj = {
-    "code" : 0,
-    "msg" : "ok",
-    "data" : {},
-    "error" : null
-  };
+  var rsltObj = XXDRM.getOriginReturnJSON();
 
   try {
     var userCheckRs = objAdoCmd.execute();

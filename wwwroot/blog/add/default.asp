@@ -5,9 +5,10 @@
   Response.charSet = "utf-8";
 %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
-<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/xx-xdream.js.inc" -->
 <%
   var totalByteLength = Request.totalBytes;
   var contentLengthHeader = Request.serverVariables("CONTENT_LENGTH") - 0;
@@ -66,12 +67,7 @@
     objAdoCmd.commandType = adCmdText;
     objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_INSERT;
 
-    rsltObj = {
-      "code" : 0,
-      "msg" : "ok",
-      "data" : {},
-      "error" : null
-    };
+    rsltObj = XXDRM.getOriginReturnJSON();
 
     try {
       objAdoCmd.execute();
@@ -87,6 +83,7 @@
     var identityRs = null;
 
     objAdoCmd.commandText = "SELECT @@IDENTITY";
+    objAdoCmd.commandTimeout = XXASP.TIMEOUT.DB_FIND;
 
     try {
       identityRs = objAdoCmd.execute();

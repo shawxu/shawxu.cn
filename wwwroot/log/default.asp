@@ -5,7 +5,6 @@
 %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/json2.js.inc" -->
-
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
 <%
