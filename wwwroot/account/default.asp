@@ -1,4 +1,4 @@
-<%@ language="jscript" codepage="65001" %>
+<%@ language="jscript" codepage="65001" enablesessionstate="false" %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
@@ -20,13 +20,13 @@
 <body>
 	<main id="container">
 		<article>
-      <h5>Session ID: <%= Session.SessionID %></h5>
+      <h5>Session ID: NO Session</h5>
 		</article>
     <article>
-      <h6>Hello <%= Session("uname") %></h6>
+      <h6>Hi</h6>
       <%
         var connAccessDb = Server.createObject("ADODB.Connection");
-        connAccessDb.connectionString = Session.contents("dbConnString");
+        connAccessDb.connectionString = Application.contents("dbConnString");
         connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
         connAccessDb.open();
 

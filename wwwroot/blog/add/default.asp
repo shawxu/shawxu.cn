@@ -37,7 +37,7 @@
 
   } else {
     var connAccessDb = Server.createObject("ADODB.Connection");
-    connAccessDb.connectionString = Session.contents("dbConnString");
+    connAccessDb.connectionString = Application.contents("dbConnString");
     connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
     connAccessDb.open();
 
