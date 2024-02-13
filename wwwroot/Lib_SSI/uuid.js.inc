@@ -682,6 +682,7 @@
     XXASP.UUID.v3 = v35('v3', 0x30, md5);
     XXASP.UUID.v4 = v4;
     XXASP.UUID.v5 = v35('v5', 0x50, sha1);
+    XXASP.UUID.parse = parse;
     XXASP.md5 = md5;
     XXASP.sha1 = sha1;
     XXASP.hashStringify = commonStringify;

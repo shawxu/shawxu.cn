@@ -1,8 +1,8 @@
-<%@ language="jscript" codepage="65001"%>
+<%@ language="jscript" codepage="65001" enablesessionstate="false" %>
 <!-- #include virtual = "/Lib_SSI/xx-json2.js.inc" -->
+<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <!-- #include virtual = "/Lib_SSI/adojavas.inc" -->
 <!-- #include virtual = "/Lib_SSI/xx-asp.js.inc" -->
-<!-- #include virtual = "/Lib_SSI/uuid.js.inc" -->
 <%
   var _t0 = new Date();
   Response.charSet = "utf-8";
@@ -14,44 +14,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href="https://s3.shawxu.net/images/favicons/xx-v1/favicon.ico">
   <link rel="stylesheet" href="https://s3.shawxu.net/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://shawxu.net/assets/style/main.css">
 	<title>shawxu.cn /blog</title>
-  <style>
-    table {
-      width:1200px;
-    }
-    caption {
-      caption-side:top;
-    }
-    tbody, thead {
-      font-size:0.75rem;
-    }
-    td, th {
-      max-height:50px;
-      overflow:hidden;
-    }
-    .words {
-      font-size:0.6rem;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
-    .blogtitle {
-      width:160px;
-    }
-    .blogcontent {
-      width:480px;
-    }
-  </style>
 </head>
 <body>
 	<main id="container">
 		<article>
-      <h5>Session ID: <%= Session.SessionID %></h5>
+      <h5>Session ID: NO Session</h5>
 		</article>
     <article>
-      <h6>Hello <%= Session("uname") %></h6>
+      <h6>Hello</h6>
       <%
         var connAccessDb = Server.createObject("ADODB.Connection");
-        connAccessDb.connectionString = Session.contents("dbConnString");
+        connAccessDb.connectionString = Application.contents("dbConnString");
         connAccessDb.connectionTimeout = XXASP.TIMEOUT.DB_CONN;
         connAccessDb.open();
 
@@ -77,9 +52,9 @@
               }
               restArrStr.push(rSet.fields(i).name, "</th>");
             }
-            restArrStr.push("</tr></thead><tbody>");
+            restArrStr.push("</tr></thead>");
           } //表头展现结束
-          restArrStr.push("<tr>");
+          restArrStr.push("<tbody><tr>");
           for (var i = 0, cl = rSet.fields.count; i < cl; ++i) {
             switch (rSet.fields(i).name) {
               case "Content":
